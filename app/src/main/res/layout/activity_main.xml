@@ -1,6 +1,22 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+
+        <TextView
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#f35b9a03"
+            android:gravity="center"
+            android:text="Header"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp" />
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/rl_main"
@@ -15,11 +31,13 @@
         <LinearLayout
             android:id="@+id/ll_bottom_tab"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_alignParentBottom="true"
+            android:background="#f35b9a03"
             android:baselineAligned="true"
             android:gravity="center_vertical"
             android:orientation="horizontal">
+
             <RelativeLayout
                 android:id="@+id/rl_know"
                 android:layout_width="0dp"
@@ -29,7 +47,7 @@
                 <ImageView
                     android:id="@+id/iv_know"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:layout_centerHorizontal="true"
                     android:contentDescription="@null"
                     android:src="@drawable/btn_know_nor" />
@@ -54,7 +72,7 @@
                 <ImageView
                     android:id="@+id/iv_i_want_know"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:layout_centerHorizontal="true"
                     android:contentDescription="@null"
                     android:src="@drawable/btn_wantknow_nor" />
@@ -79,10 +97,11 @@
                 <ImageView
                     android:id="@+id/iv_me"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:layout_centerHorizontal="true"
                     android:contentDescription="@null"
                     android:src="@drawable/btn_my_nor" />
+
 
 
                 <TextView
@@ -99,13 +118,14 @@
 
         <!-- 内容部分， fragment切换 -->
 
+
         <LinearLayout
             android:id="@+id/content_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/line"
             android:layout_weight="1"
-            android:orientation="vertical"></LinearLayout>
+            android:orientation="vertical" />
 
         <View
             android:id="@+id/line"

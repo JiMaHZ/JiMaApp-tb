@@ -40,9 +40,9 @@ public class FragmentShezhi extends Fragment {
     public static final int UPDATE_TEXT=1;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
-    private EditText customername;
-    private EditText customerphone;
-    private EditText customeremail;
+    private TextView customername;
+    private TextView customerphone;
+    private TextView customeremail;
     private Button exit;
     @SuppressLint("HandlerLeak")
     private Handler handler=new Handler(){
@@ -51,9 +51,9 @@ public class FragmentShezhi extends Fragment {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case UPDATE_TEXT:
-                    customername.setText("用户 "+pref.getString("name",""));
-                    customeremail.setText("邮箱 "+pref.getString("email",""));
-                    customerphone.setText("电话 "+pref.getString("phone",""));
+                    customername.setText(pref.getString("name",""));
+                    customeremail.setText(pref.getString("email",""));
+                    customerphone.setText(pref.getString("phone",""));
                     break;
                     default:
                         break;
@@ -81,7 +81,7 @@ public class FragmentShezhi extends Fragment {
                 try {
                     Gson gson=new Gson();
                     CustomerId customerId=gson.fromJson(responseData,CustomerId.class);
-                    String id = customerId.getCustomerId().id;
+                    final String id = customerId.getCustomerId().id;
                     Log.e(TAG,id);
                     String url=customeraddress+id;
                     Log.e(TAG,url);
@@ -125,9 +125,9 @@ public class FragmentShezhi extends Fragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.activity_fragment_shezhi, container,
                 false);
-        customername=(EditText) view.findViewById(R.id.et_yonghu);
-        customerphone=(EditText) view.findViewById(R.id.et_dianhua);
-        customeremail=(EditText)view.findViewById(R.id.et_youxiang);
+        customername=(TextView) view.findViewById(R.id.et_yonghu);
+        customerphone=(TextView) view.findViewById(R.id.et_dianhua);
+        customeremail=(TextView)view.findViewById(R.id.et_youxiang);
         exit=(Button)view.findViewById(R.id.btn_tuichu);
         exit.setOnClickListener(new View.OnClickListener() {
             @Override

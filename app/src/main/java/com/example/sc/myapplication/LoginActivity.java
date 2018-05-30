@@ -4,11 +4,13 @@ package com.example.sc.myapplication;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -28,20 +30,32 @@ import okhttp3.Response;
 
 
 public class LoginActivity extends AppCompatActivity {
+    private SharedPreferences rememberpref;
+    private SharedPreferences.Editor remembereditor;
     public static final String TAG = "LoginActivity";
     public static final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
     private EditText et_user;
     private EditText et_pwd;
     private Button login;
+    private CheckBox rememberPass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        getSupportActionBar().hide();
+        rememberpref= PreferenceManager.getDefaultSharedPreferences(this);
         et_user=(EditText)findViewById(R.id.et_login_username);
         et_pwd=(EditText)findViewById(R.id.et_login_password);
         login=(Button)findViewById(R.id.bt_login);
+        rememberPass=(CheckBox) findViewById(R.id.remember_pass);
+        boolean isRember=rememberpref.getBoolean("remember_pass",false);
+        if(isRember){
+            String account=rememberpref.getString("account","");
+            String password=rememberpref.getString("password","");
+            et_user.setText(account);
+            et_pwd.setText(password);
+            rememberPass.setChecked(true);
+        }
         login.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -56,11 +70,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+
         }
 
     private void actionLogin() {
-        String username = et_user.getText().toString();
-        String password = et_pwd.getText().toString();
+        final String username = et_user.getText().toString();
+        final String password = et_pwd.getText().toString();
 
         JSONObject jsonObject=new JSONObject();
 
@@ -83,13 +98,22 @@ public class LoginActivity extends AppCompatActivity {
                             .post(requestBody)
                             .build();
                     Response response=client.newCall(request).execute();
+                    String responseData=response.body().string();
                     if (response.isSuccessful()) {
-                        String responseData=response.body().string();
+                        remembereditor=rememberpref.edit();
+                        if(rememberPass.isChecked()){
+                            remembereditor.putBoolean("remember_pass",true);
+                            remembereditor.putString("account",username);
+                            remembereditor.putString("password",password);
+                        }else {
+                            remembereditor.clear();
+                        }
+                        remembereditor.apply();
                         Gson gson =new Gson();
                         Person person=gson.fromJson(responseData,Person.class);
-                        Log.e(TAG,"responseData is "+responseData);
                         String token=person.token;
                         String refreshToken=person.refreshToken;
+                        Log.e(TAG,token);
                         SharedPreferences.Editor editor=getSharedPreferences("data",MODE_PRIVATE).edit();
                         editor.putString("token",token);
                         editor.putString("refreshToken",refreshToken);
@@ -100,9 +124,7 @@ public class LoginActivity extends AppCompatActivity {
                         LoginActivity.this.finish();
                         startActivity(intent);
                     }
-                    else {
-                        Toast.makeText(LoginActivity.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
-                    }
+
                 }
                 catch (Exception e){
                     e.printStackTrace();

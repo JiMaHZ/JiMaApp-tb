@@ -23,7 +23,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
     // 底部标签图片
     private ImageView quyuImg, tianqiImg, shezhiImg;
     // 底部标签的文本
-    private TextView quyuTv, tianqiTv, shezhiTv;
+    private TextView quyuTv, tianqiTv, shezhiTv, header;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +51,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
         quyuTv = (TextView) findViewById(R.id.tv_know);
         tianqiTv = (TextView) findViewById(R.id.tv_i_want_know);
         shezhiTv = (TextView) findViewById(R.id.tv_me);
+        header=(TextView) findViewById(R.id.header);
 
     }
 
@@ -78,6 +79,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
                     R.color.bottomtab_normal));
             shezhiImg.setImageResource(R.drawable.btn_my_nor);
             shezhiTv.setTextColor(getResources().getColor(R.color.bottomtab_normal));
+            header.setText("区域");
 
         }
 
@@ -117,6 +119,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
                 R.color.bottomtab_normal));
         shezhiImg.setImageResource(R.drawable.btn_my_nor);
         shezhiTv.setTextColor(getResources().getColor(R.color.bottomtab_normal));
+        header.setText("区域");
     }
 
     /**
@@ -135,6 +138,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
                 R.color.bottomtab_press));
         shezhiImg.setImageResource(R.drawable.btn_my_nor);
         shezhiTv.setTextColor(getResources().getColor(R.color.bottomtab_normal));
+        header.setText("天气");
 
     }
 
@@ -154,6 +158,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
                 R.color.bottomtab_normal));
         shezhiImg.setImageResource(R.drawable.btn_my_pre);
         shezhiTv.setTextColor(getResources().getColor(R.color.bottomtab_press));
+        header.setText("用户信息");
 
     }
 
