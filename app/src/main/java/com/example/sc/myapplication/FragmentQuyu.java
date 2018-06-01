@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
+import com.example.sc.parse.App;
 import com.example.sc.parse.CustomerId;
 import com.example.sc.parse.Data;
 import com.example.sc.parse.Device;
@@ -50,41 +51,41 @@ import static com.example.sc.myapplication.FragmentShezhi.UPDATE_TEXT;
 public class FragmentQuyu extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private RvAdapter rvAdapter;
-    public static final int UPDATE_TEXT=1;
+    public static final int UPDATE_TEXT = 1;
     private List<String> datas = new ArrayList<>();
     private List<String> images = new ArrayList<>();
     private SharedPreferences.Editor editor;
     public static final String TAG = "FragmentQuyu";
-    public String name[]=new String[32];
-    public String names[]=new String[10];
-    public String namess[]=new String[10];
-    public String Ids[]=new String[10];
-    public String json[]=new String[10];
-    public String Id[]=new String[32];
-    private Handler handler=new Handler();
-    public String value[]=new String[100];
-    private String[] region=new String[32];
-    private String[] region1=new String[32];
-    private String[] region2=new String[32];
-    private String[] regions1=new String[32];
-    private String[] regions2=new String[32];
-    private String[] dvdata=new String[32];
-    private String rg[]=new String[32];
-    public int e=1,c=0,a=0,b=0;
-    public int i = 0,i1=0,i2=0,i3=0,i4=0;
+    public String name[] = new String[32];
+    public String names[] = new String[10];
+    public String namess[] = new String[10];
+    public String Ids[] = new String[10];
+    public String json[] = new String[10];
+    public String Id[] = new String[32];
+    private Handler handler = new Handler();
+    public String value[] = new String[100];
+    private String[] region = new String[32];
+    private String[] region1 = new String[32];
+    private String[] region2 = new String[32];
+    private String[] regions1 = new String[32];
+    private String[] regions2 = new String[32];
+    private String[] dvdata = new String[32];
+    private String rg[] = new String[32];
+    public int e = 1, c = 0, a = 0, b = 0;
+    public int i = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 0;
 
     JSONArray jArray2 = new JSONArray();
     JSONArray jArray3 = new JSONArray();
-    JSONObject jsonObject1=new JSONObject();
-    JSONObject jsonObject2=new JSONObject();
-    JSONObject jsonObject3=new JSONObject();
+    JSONObject jsonObject1 = new JSONObject();
+    JSONObject jsonObject2 = new JSONObject();
+    JSONObject jsonObject3 = new JSONObject();
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String useraddress = "http://140.143.23.199:8080/api/auth/user";
-        final String device = "http://140.143.23.199:8080/api/customer/";
+        String useraddress = App.baseURL + "/api/auth/user";
+        final String device = App.baseURL + "/api/customer/";
         SharedPreferences pref = Objects.requireNonNull(getContext()).getSharedPreferences("data", MODE_PRIVATE);
         final String token = pref.getString("token", "");
         HttpUtil.sendOkHttpRequest(useraddress, token, new okhttp3.Callback() {
@@ -124,7 +125,7 @@ public class FragmentQuyu extends Fragment {
                                 //name[i] = data.getName();
                                 //Id[i] = data.getId().getId();
 
-                                String url1 = "http://140.143.23.199:8080/api/plugins/telemetry/DEVICE/" + data.getId().getId() + "/values/attributes/SERVER_SCOPE";
+                                String url1 = App.baseURL + "/api/plugins/telemetry/DEVICE/" + data.getId().getId() + "/values/attributes/SERVER_SCOPE";
 
                                 HttpUtil.sendOkHttpRequest(url1, token, new okhttp3.Callback() {
 
@@ -184,7 +185,7 @@ public class FragmentQuyu extends Fragment {
                                                     Log.e(TAG, "name[i2] " + name[i2]);
                                                     Log.e(TAG, "Id[i1] " + Id[i1]);
                                                     i2++;
-                                                }catch (Exception e){
+                                                } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
                                             }
@@ -295,18 +296,18 @@ public class FragmentQuyu extends Fragment {
                         rvAdapter.notifyDataSetChanged();
                         swipeRefreshLayout.setRefreshing(false);
                     }
-                },3000);
+                }, 3000);
             }
         });
         //for (int i = 0; i < 5; i++) {
-            //datas.add("标题" + i);
+        //datas.add("标题" + i);
         //}
         //Log.e(TAG+"1", datas.toString());
-        handler=new Handler(){
+        handler = new Handler() {
             @SuppressLint("SetTextI18n")
             @Override
             public void handleMessage(Message msg) {
-                switch (msg.what){
+                switch (msg.what) {
                     case UPDATE_TEXT:
 
                         rvAdapter.notifyDataSetChanged();
@@ -317,29 +318,29 @@ public class FragmentQuyu extends Fragment {
                 }
             }
         };
-        rvAdapter = new RvAdapter(datas,images);
+        rvAdapter = new RvAdapter(datas, images);
         recyclerView.setLayoutManager(new LinearLayoutManager(FragmentQuyu.this.getActivity()));
         recyclerView.setAdapter(rvAdapter);
 
         rvAdapter.setItemClickListener(new RvAdapter.OnItemClickListener() {
             @Override
             public void onTextClick(View view, int position) {
-                Intent intent=new Intent(FragmentQuyu.this.getActivity(),DeviceActivity.class);
+                Intent intent = new Intent(FragmentQuyu.this.getActivity(), DeviceActivity.class);
                 intent.putExtra("region1", datas.get(position));
-                intent.putExtra("Id",Arrays.toString(Id));
-                intent.putExtra("region2",Arrays.toString(region2));
-                intent.putExtra("name",Arrays.toString(name));
+                intent.putExtra("Id", Arrays.toString(Id));
+                intent.putExtra("region2", Arrays.toString(region2));
+                intent.putExtra("name", Arrays.toString(name));
                 startActivity(intent);
 
             }
 
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent=new Intent(FragmentQuyu.this.getActivity(),DeviceActivity.class);
+                Intent intent = new Intent(FragmentQuyu.this.getActivity(), DeviceActivity.class);
                 intent.putExtra("region1", datas.get(position));
-                intent.putExtra("Id",Arrays.toString(Id));
-                intent.putExtra("region2",Arrays.toString(region2));
-                intent.putExtra("name",Arrays.toString(name));
+                intent.putExtra("Id", Arrays.toString(Id));
+                intent.putExtra("region2", Arrays.toString(region2));
+                intent.putExtra("name", Arrays.toString(name));
                 startActivity(intent);
             }
         });

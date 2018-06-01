@@ -4,7 +4,8 @@ import java.util.List;
 
 public class App {
 
-    public static String baseURL = "http://140.143.23.199:8080";
+    public static final String baseURL = "http://140.143.23.199:8080";
+    public static final String baseWsURL = "ws://140.143.23.199:8080";
 
     private String name;
 
