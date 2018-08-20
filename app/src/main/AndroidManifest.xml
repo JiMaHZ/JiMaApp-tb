@@ -14,13 +14,15 @@
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".DeviceActivity" />
         <activity android:name=".Main2Activity" />
-        <activity android:name=".Rv2Cardview"></activity>
+        <activity android:name=".Rv2Cardview"/>
+        <activity android:name=".Rv3Cardview"/>
     </application>
 
 </manifest>

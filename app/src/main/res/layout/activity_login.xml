@@ -1,39 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@drawable/login_background">
+
 <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="30dp"
-    android:background="#FFFFFF">
+    android:layout_height="77dp">
+
 </LinearLayout>
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:background="#FFFFFF"
-        android:src="@drawable/logoimg" />
+        android:layout_width="100dp"
+        android:layout_height="70dp"
+        android:layout_gravity="center"
+        android:src="@drawable/logo_jm_6"
+        />
+    //android:opacity="0.65"
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:background="#FFFFFF">
+        android:layout_height="30dp">
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/login_bg"
         android:orientation="vertical" >
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="290dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dip"
             android:layout_marginRight="10dip"
             android:layout_marginTop="10dip"
-            android:background="@drawable/login_text_bg"
+            android:layout_gravity="center"
             android:orientation="vertical"
             android:paddingBottom="5dip"
             android:paddingTop="5dip" >
@@ -45,11 +50,14 @@
                 android:orientation="horizontal"
                 android:padding="10dip" >
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="用户名"
-                    android:textSize="18sp" />
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="30dp"
+                    android:left="50dp"
+                    android:src="@drawable/username" />
+                //android:opacity="0.34"
+                //android:box-shadow="0dp 0dp 0dp 0dp rgba(170, 170, 170, 1)"
+
 
                 <LinearLayout
                     android:layout_width="0dip"
@@ -68,6 +76,7 @@
                         android:inputType="text"
                         android:maxLength="30"
                         android:textSize="18sp" />
+
                 </LinearLayout>
 
             </LinearLayout>
@@ -75,11 +84,11 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
-                android:layout_marginBottom="5dip"
+                android:layout_marginBottom="0dip"
                 android:layout_marginLeft="5dip"
                 android:layout_marginRight="5dip"
-                android:layout_marginTop="5dip"
-                android:background="#cccccc" />
+                android:layout_marginTop="0dip"
+                android:background="#76E97B" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -88,11 +97,11 @@
                 android:orientation="horizontal"
                 android:padding="10dip" >
 
-                <TextView
-                    android:layout_width="54sp"
-                    android:layout_height="wrap_content"
-                    android:text="密码"
-                    android:textSize="18sp" />
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="30dp"
+                    android:left="50dp"
+                    android:src="@drawable/pwd" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -111,37 +120,65 @@
                         android:maxLength="18"
                         android:textSize="18sp" />
                 </LinearLayout>
+
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:layout_marginBottom="0dip"
+                android:layout_marginLeft="5dip"
+                android:layout_marginRight="5dip"
+                android:layout_marginTop="0dip"
+                android:background="#76E97B" />
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="40dp">
+
+        </LinearLayout>
+        <Button
+            android:id="@+id/bt_login"
+            android:layout_width="290dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:layout_marginTop="10dip"
+            android:background="@drawable/btn_login"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:text="登录"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="10dp">
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
+            android:gravity="center"
             android:orientation="horizontal"
             android:layout_marginTop="10dip"
             android:layout_marginRight="20dip">
 
             <CheckBox
                 android:id="@+id/remember_pass"
+                android:textColor="@color/white"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                style="@style/CustomCheckboxTheme"/>
 
             <TextView
+                android:textColor="@color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="记住密码"
                 android:textSize="18sp" />
         </LinearLayout>
-        <Button
-            android:id="@+id/bt_login"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:layout_marginTop="10dip"
-            android:background="@drawable/btn_login"
-            android:text="登录" />
+
 
 
     </LinearLayout>
