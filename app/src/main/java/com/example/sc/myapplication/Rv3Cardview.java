@@ -1,21 +1,19 @@
 package com.example.sc.myapplication;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import com.example.sc.parse.Item;
+import com.example.sc.parse.IniStatus;
 
-import com.example.sc.util.HttpUtil;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
-import static android.content.Context.MODE_PRIVATE;
 
 
 public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -23,63 +21,191 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private LayoutInflater mLayoutInflater;
     private List<String> datas;
     private List<String> title;
-    private List<String> control_addrtw;
-    private List<String> control_addrte;
-    private String Id;
-    private String token;
-    int i;
+    public List<String> button_values;
+    //    private List<String> control_addrtw;
+//    private List<String> control_addrte;
+//    private  String Id;
+//    private  String token;
+    private List<Item> icardList;
+    private List<IniStatus> statuskeyList;
+    private int te;
+    private int tw;
+
+    private OnSwitchClickListener mOnSwitchClickListener;
+    private OnButtonClickListener mOnButtonClickListener;
+    private List<Type> typeList = new ArrayList<>();
 
     public enum ITEM_TYPE {
         ITEM1,
         ITEM2
     }
 
-    public Rv3Cardview(int i, List<String> datas, List<String> title, List<String> control_addrtw, List<String> control_addrte, String Id, String token) {
-        this.title = title;
-        this.datas = datas;
-        this.i = i;
-        this.control_addrtw = control_addrtw;
-        this.control_addrte = control_addrte;
-        this.Id = Id;
-        this.token = token;
-
+    //标记下选中和未选中这两种状态
+    public enum Type{
+        Checked, UnCheck
     }
 
 
+    public Rv3Cardview(List<Item> icardList, List<String> datas, List<String> title, int tw, int te, List<IniStatus> statuskeyList) {
+        this.title = title;
+        this.datas = datas;
+        this.icardList = icardList;
+        this.tw = tw;
+        this.statuskeyList = statuskeyList;
+        this.te = te;
+
+//        this.control_addrtw=control_addrtw;
+//        this.control_addrte=control_addrte;
+//        this.Id =Id;
+//        this.token =token;
+         initData();
+    }
+
+    //初始化checkbox数据  暂时假设均为关闭
+    private void initData() {
+        for (int i = 0; i < tw; i++) {
+
+//            if ((statuskeyList.size() != 0) && (statuskeyList.get(i).getStatuskey().equals("0001"))) {
+//                Type type = Type.Checked;
+//                typeList.add(type);
+//            } else if ((statuskeyList.size() != 0) && (statuskeyList.get(i).getStatuskey().equals("0000"))) {
+//                Type type = Type.UnCheck;
+//                typeList.add(type);
+//            }else {
+                Type type = Type.UnCheck;
+                typeList.add(type);
+//            }
+
+
+
+
+        }
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        if (viewType == ITEM_TYPE.ITEM1.ordinal()) {
+//        viewType == ITEM_TYPE.ITEM1.ordinal()
+        if (viewType == 0) {
             View view = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.rvc1_item_cardview, parent, false);
             return new Item1ViewHolder(view);
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.rvc2_item_cardview, parent, false);
-            return new Item1ViewHolder(view);
+            return new Item2ViewHolder(view);
         }
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+//        holder.itemView.setTag(position);
         if (holder instanceof Item1ViewHolder) {
             ((Item1ViewHolder) holder).mTextView1.setText(title.get(position));
             ((Item1ViewHolder) holder).mTextView2.setText(datas.get(position));
+            ((Item1ViewHolder) holder).aSwitch.setOnCheckedChangeListener(null);
+                if ((statuskeyList.size() != 0) &&(statuskeyList.get(position).getStatuskey().equals("0001"))){
+//                    ((Item1ViewHolder) holder).aSwitch.setChecked(true);
+                    typeList.set(position, Type.Checked);
+                    statuskeyList.get(position).setStatuskey("INI");
+//                    typeList.add(type);
+                } else if ((statuskeyList.size() != 0) &&(statuskeyList.get(position).getStatuskey().equals("0000"))) {
+//                    ((Item1ViewHolder) holder).aSwitch.setChecked(false);
+                    typeList.set(position, Type.UnCheck);
+                    statuskeyList.get(position).setStatuskey("INI");
+//                    typeList.add(type);
+                }
+//                else {
+////                    ((Item1ViewHolder) holder).aSwitch.setChecked(false);
+//                    typeList.set(position, Type.UnCheck);
+////                    typeList.add(type);
+//                }
+
+            ((Item1ViewHolder) holder).aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                    if (buttonView.isPressed()) {
+
+                        if (mOnSwitchClickListener != null) {
+                            mOnSwitchClickListener.onClick(icardList.get(position), position, isChecked);
+                            if (isChecked){
+                                typeList.set(position, Type.Checked);
+                            }
+                            else{
+                                typeList.set(position, Type.UnCheck);
+                            }
+                        }
+                    }
+                    else {
+                        return;
+//                        if ((statuskeyList.size() != 0) &&(statuskeyList.get(position).getStatuskey().equals("0001"))){
+////                    ((Item1ViewHolder) holder).aSwitch.setChecked(true);
+//                            typeList.set(position, Type.Checked);
+////                    typeList.add(type);
+//                        } else if ((statuskeyList.size() != 0) &&(statuskeyList.get(position).getStatuskey().equals("0000"))) {
+////                    ((Item1ViewHolder) holder).aSwitch.setChecked(false);
+//                            typeList.set(position, Type.UnCheck);
+////                    typeList.add(type);
+//                        }else {
+////                    ((Item1ViewHolder) holder).aSwitch.setChecked(false);
+//                            typeList.set(position, Type.UnCheck);
+////                    typeList.add(type);
+//                        }
+                    }
+                }
+            });
+
+            //保留原有位置
+            if (typeList.get(position).equals(Type.Checked) ) {
+            	((Item1ViewHolder) holder).aSwitch.setChecked(true);
+            } else if (typeList.get(position).equals(Type.UnCheck)) {
+            	((Item1ViewHolder) holder).aSwitch.setChecked(false);
+            } else {
+            	((Item1ViewHolder) holder).aSwitch.setChecked(false);
+            }
         } else if (holder instanceof Item2ViewHolder) {
             ((Item2ViewHolder) holder).mTextView1.setText(title.get(position));
             ((Item2ViewHolder) holder).mTextView2.setText(datas.get(position));
+            ((Item2ViewHolder) holder).mTextView2.setText(datas.get(position));
+            ((Item2ViewHolder) holder).button1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnButtonClickListener != null) {
+                        mOnButtonClickListener.onClick(icardList.get(position), position, v);
+                    }
+                }
+            });
+            ((Item2ViewHolder) holder).button2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnButtonClickListener != null) {
+                        mOnButtonClickListener.onClick(icardList.get(position), position, v);
+                    }
+                }
+            });
+            ((Item2ViewHolder) holder).button3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnButtonClickListener != null) {
+                        mOnButtonClickListener.onClick(icardList.get(position), position, v);
+                    }
+                }
+            });
         }
     }
 
 
     @Override
     public int getItemViewType(int i) {
-        if (i == 0) {
-            return ITEM_TYPE.ITEM1.ordinal();
-        } else if (i == 1) {
-            return ITEM_TYPE.ITEM2.ordinal();
-        } else {
-            return Integer.parseInt(null);
+
+        if (icardList.size() !=0 &&(icardList.get(i).getLocation().equals("1"))) {
+            return 1;
+        }
+//          else if(
+// icardList.get(i).equals("1")){return ITEM_TYPE.ITEM2.ordinal();}
+        else {
+//            return ITEM_TYPE.ITEM2.ordinal();
+            return 0;
         }
     }
 
@@ -88,6 +214,42 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return datas.size();
     }
 
+    public OnItemClickListener itemClickListener;
+
+    /**
+     * 设置接口
+     *
+     * @param itemClickListener
+     */
+    public void setItemClickListener(OnItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
+    }
+
+    /**
+     * 点击事件接口
+     */
+    public interface OnItemClickListener {
+        //item的点击事件
+        void onItemClick(View view, int position);
+
+        //item中文字的点击事件
+        void onTextClick(View view, int position);
+    }
+
+    /**
+     * 按钮点击事件接口
+     */
+    public interface OnButtonClickListener {
+        void onClick(Item item, int position, View view);
+    }
+
+    /**
+     * 开关点击事件接口
+     */
+    public interface OnSwitchClickListener {
+
+        void onClick(Item item, int position, boolean isChecked);
+    }
 
     public static class Item1ViewHolder extends RecyclerView.ViewHolder {
         TextView mTextView1;
@@ -96,9 +258,10 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         public Item1ViewHolder(View itemView) {
             super(itemView);
-            mTextView1 = (TextView) itemView.findViewById(R.id.tv_title);
-            mTextView2 = (TextView) itemView.findViewById(R.id.tv_data);
+            mTextView1 = (TextView) itemView.findViewById(R.id.tv_name);
+            mTextView2 = (TextView) itemView.findViewById(R.id.tv_data1);
             aSwitch = (Switch) itemView.findViewById(R.id.switch1);
+
         }
     }
 
@@ -110,28 +273,40 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         public Item2ViewHolder(View itemView) {
             super(itemView);
-            mTextView1 = (TextView) itemView.findViewById(R.id.tv_title);
-            mTextView2 = (TextView) itemView.findViewById(R.id.tv_data);
+            mTextView1 = (TextView) itemView.findViewById(R.id.tv_name);
+            mTextView2 = (TextView) itemView.findViewById(R.id.tv_data1);
             button1 = (Button) itemView.findViewById(R.id.bt_zhengzhuan);
             button2 = (Button) itemView.findViewById(R.id.bt_stop);
             button3 = (Button) itemView.findViewById(R.id.bt_fanzhuan);
-            //button1.setOnClickListener(new View.OnClickListener(){
-/*
-                @Override
-                public void onClick(View v) {
-                    switch (v.getId()) {
-                        case R.id.bt_zhengzhuan:
-                            int position;
-                            HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/"+Id,token,control_addrte,"0008",new okhttp3.Callback(){
 
-                            });
-                            break;
-                        default:
-                            break;
 
-                    }
-                }*/
-            // });
+//            button1.setOnClickListener(new View.OnClickListener(){
+//
+//                @Override
+//                public void onClick(View v) {
+//                    switch (v.getId()) {
+//                        case R.id.bt_zhengzhuan:
+//                            int position;
+//                            Toast.makeText(v.getContext(),"正转",Toast.LENGTH_SHORT).show();
+////                            HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/"+Id,token,control_addrte,"0008",new okhttp3.Callback(){
+////
+////                            });
+//                            break;
+//                        default:
+//                            break;
+//
+//                    }
+//                }
+//            });
         }
+    }
+
+
+    public void setOnSwitchClickListener(OnSwitchClickListener onSwitchClickListener) {
+        mOnSwitchClickListener = onSwitchClickListener;
+    }
+
+    public void setOnButtonClickListener(OnButtonClickListener onButtonClickListener) {
+        mOnButtonClickListener = onButtonClickListener;
     }
 }

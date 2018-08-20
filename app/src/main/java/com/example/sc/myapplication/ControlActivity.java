@@ -66,7 +66,6 @@ public class ControlActivity extends Fragment {
 
 
     public int[] i0 = new int[700];
-    //    public int icard=0;
     public List<Item> icardList = new ArrayList<>();
     public List<IniStatus> statuskeyList = new ArrayList<>();
     // public Item icard =new Item();
@@ -366,7 +365,7 @@ public class ControlActivity extends Fragment {
                                 i012[j] = t;
 //                                exchange(cur_keytw[i],cur_keytw[j]);
 
-                                //采用交换数组函数 全部替换
+                                //采用交换数组 全部替换
                             }
                         }
                     }
@@ -692,11 +691,12 @@ public class ControlActivity extends Fragment {
                     Log.e("i2", "i2 " + i2);
                     ParseJSONWithJSONObject(text);
                     for (int i = 0; i < i2; i++) {
-                        IniStatus statuskey = new IniStatus();
+//                        IniStatus statuskey = new IniStatus();
                         //Log.e("Data",data.getData().getKey1()[i]);
                         //strings=data.getData().getKey();
                         //Log.e("Data", name[i] + " " + type[i] + " " + strings[i] + " " + unit[i]);
                         if (i012[i] == 0) {
+                            IniStatus statuskey = new IniStatus();
                             statuskey.setStatuskey(button_value[i]);
                             statuskeyList.add(statuskey);
                             button_values.set(i, (button_value[i]));
@@ -704,7 +704,7 @@ public class ControlActivity extends Fragment {
 //                            icard.setLocation("0");
                             title.set(i, (name12[i]));
                             //type[i] + ":\n"
-                            datas.set(i, ("当前电流 " + strings[i] + " " + "A   " + "最大电流 " + strings2[i] + " " + "A"+button_values.get(i)));
+                            datas.set(i, ("当前电流 " + strings[i] + " " + "A   " + "最大电流 " + strings2[i] + " " + "A"+button_values.get(i)+" "+statuskeyList.get(i).getStatuskey()));
 //                                times.set(i,(time[i]));
                         } else if (i012[i] == 1) {
 //                            icard.setLocation("1");

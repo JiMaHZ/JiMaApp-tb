@@ -417,7 +417,7 @@ public class DataActivity extends Fragment {
 
                 }
                 if (data.length() == 1) {
-                    for (int i = i4; i < 700; i++) {
+                    for (int i = i4; i < i2; i++) {
                         try {
                             String[] sd = new String[10];
                             if (i7 == 1) {
@@ -447,7 +447,7 @@ public class DataActivity extends Fragment {
                     }
                 }
                 final int l = data.length();
-                for (int i = i4; i < 700; i++) {
+                for (int i = i4; i < i2; i++) {
                     try {
                         String[] sd = new String[700];
                         if (i7 == 1) {
