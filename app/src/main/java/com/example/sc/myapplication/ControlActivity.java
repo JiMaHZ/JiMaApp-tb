@@ -219,7 +219,7 @@ public class ControlActivity extends Fragment {
                                 Idss[0] = devId[7];       //deviceId的数组
                                 Log.e("Idss[i]", Idss[0]);
                             }
-                            key[i2] = device.getKey();
+                            key[i2] = device.getKey().substring(1);
                             Log.e("KEY", key[i2]);
                             name[i2] = value1.getName();
 //                            Log.e("NAME",name[i2]);
@@ -229,15 +229,15 @@ public class ControlActivity extends Fragment {
                             if (type[i2].equals("两态可控")) {
                                 i0[i2] = 0;
                                 tw++;       //记录风机个数
-                                cur_keytw[i2] = value1.getConfig().getCur_key();
-                                max_cur_keytw[i2] = value1.getConfig().getMax_cur_key();
+                                cur_keytw[i2] = value1.getConfig().getCur_key().substring(1);
+                                max_cur_keytw[i2] = value1.getConfig().getMax_cur_key().substring(1);
                             } else if (type[i2].equals("三态可控")) {
                                 i0[i2] = 1;
                                 te++;       //记录卷膜个数
-                                on_cur_keyte[i2] = value1.getConfig().getOn_cur_key();
-                                off_cur_keyte[i2] = value1.getConfig().getOff_cur_key();
-                                max_on_cur_keyte[i2] = value1.getConfig().getMax_on_cur_key();
-                                max_off_cur_keyte[i2] = value1.getConfig().getMax_off_cur_key();
+                                on_cur_keyte[i2] = value1.getConfig().getOn_cur_key().substring(1);
+                                off_cur_keyte[i2] = value1.getConfig().getOff_cur_key().substring(1);
+                                max_on_cur_keyte[i2] = value1.getConfig().getMax_on_cur_key().substring(1);
+                                max_off_cur_keyte[i2] = value1.getConfig().getMax_off_cur_key().substring(1);
                             }  //取得控制器下对应电机的key值
 
 //                            int key10= Integer.parseInt(key[i2],16);
@@ -526,7 +526,7 @@ public class ControlActivity extends Fragment {
                 Log.e("token********",token);
                 Log.e("key12********",key12[position]);
                 if (isChecked){
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/6b1c7100-46ae-11e8-8280-65869ac1d365",token,key12[position],"0001",new okhttp3.Callback(){
+                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/40d777f0-a428-11e8-ad4b-4dd707116a31",token,key12[position],"0001",new okhttp3.Callback(){
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -539,7 +539,7 @@ public class ControlActivity extends Fragment {
                         }
                     });
                 } else {
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/6b1c7100-46ae-11e8-8280-65869ac1d365",token,key12[position],"0000",new okhttp3.Callback(){
+                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/40d777f0-a428-11e8-ad4b-4dd707116a31",token,key12[position],"0000",new okhttp3.Callback(){
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -577,7 +577,7 @@ public class ControlActivity extends Fragment {
                 }
                 String t = ControlActivity.this.title.get(position);
                 if ( b.equals("正转")){
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/6b1c7100-46ae-11e8-8280-65869ac1d365",token,key12[position],"0009",new okhttp3.Callback(){
+                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/40d777f0-a428-11e8-ad4b-4dd707116a31",token,key12[position],"0009",new okhttp3.Callback(){
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -587,14 +587,15 @@ public class ControlActivity extends Fragment {
                             Log.e("responseData*******",responseData);
                             if ((responseData != null)&&(responseData !="Device with requested id wasn't found!")){
                                 Log.e("Respond*********",  "已正转");
+                                Toast.makeText(getActivity(), "已正转", Toast.LENGTH_SHORT).show();
                                     b1 = false;
                                     b2 = true;
                                     b3 = true;
                             }
                         }
-                    });
+                    });//6b1c7100-46ae-11e8-8280-65869ac1d365
                 } else if ( b.equals("停止")) {
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/6b1c7100-46ae-11e8-8280-65869ac1d365", token, key12[position], "0008", new okhttp3.Callback() {
+                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/40d777f0-a428-11e8-ad4b-4dd707116a31", token, key12[position], "0008", new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -605,6 +606,7 @@ public class ControlActivity extends Fragment {
                             Log.e("responseData*******",responseData);
                             if ((responseData != null) && (responseData != "Device with requested id wasn't found!")) {
                                 Log.e("Respond*********", "已停止");
+                                Toast.makeText(getActivity(), "已停止", Toast.LENGTH_SHORT).show();
                                 b1 = true;
                                 b2 = false;
                                 b3 = true;
@@ -612,7 +614,7 @@ public class ControlActivity extends Fragment {
                         }
                     });
                 } else if ( b.equals("反转")) {
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/6b1c7100-46ae-11e8-8280-65869ac1d365", token, key12[position], "000B", new okhttp3.Callback() {
+                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/40d777f0-a428-11e8-ad4b-4dd707116a31", token, key12[position], "000B", new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -623,6 +625,7 @@ public class ControlActivity extends Fragment {
                             Log.e("responseData*******",responseData);
                             if ((responseData != null) && (responseData != "Device with requested id wasn't found!")) {
                                 Log.e("Respond*********", "已反转");
+                                Toast.makeText(getActivity(), "已反转", Toast.LENGTH_SHORT).show();
                                 b1 = true;
                                 b2 = false;
                                 b3 = true;
@@ -773,9 +776,9 @@ public class ControlActivity extends Fragment {
                             Log.e("||||||||||||||", "0000000000000");
                             if (i012[i] == 0) {
                                 Log.e("||||||||||||||", "0000000000001");
-                                button_value[i] = data.getString(key12[i]);
-                                sdcur[i] = data.getString(cur_key[i]);
-                                sdmax_cur[i] = data.getString(max_cur_key[i]);
+                                button_value[i] = data.getString("H"+key12[i]);
+                                sdcur[i] = data.getString("H"+cur_key[i]);
+                                sdmax_cur[i] = data.getString("H"+max_cur_key[i]);
                                 String[] sd1 = sdcur[i].split(",");
                                 String[] sd2 = sdmax_cur[i].split(",");
                                 strings[i] = sd1[1];
@@ -783,10 +786,10 @@ public class ControlActivity extends Fragment {
                                 Log.e("DATA", sd1[1]);
                                 Log.e("DATA", sd2[1]);       //如果是 ，首先下载什么
                             } else if (i012[i] == 1) {
-                                sdon_cur[i] = data.getString(on_cur_key[i]);
-                                sdon_max_cur[i] = data.getString(max_on_cur_key[i]);
-                                sdoff_cur[i] = data.getString(off_cur_key[i]);
-                                sdoff_max_cur[i] = data.getString(max_off_cur_key[i]);
+                                sdon_cur[i] = data.getString("H"+on_cur_key[i]);
+                                sdon_max_cur[i] = data.getString("H"+max_on_cur_key[i]);
+                                sdoff_cur[i] = data.getString("H"+off_cur_key[i]);
+                                sdoff_max_cur[i] = data.getString("H"+max_off_cur_key[i]);
                                 String[] sd1 = sdon_cur[i].split(",");
                                 String[] sd2 = sdon_max_cur[i].split(",");
                                 String[] sd3 = sdoff_cur[i].split(",");
@@ -823,9 +826,9 @@ public class ControlActivity extends Fragment {
                             Log.e("|||||||i012", String.valueOf(i012[i]));
                             Log.e("||||data", data.toString());
                             Log.e("||||cur_key[i]", cur_key[i]);
-                            buttonkey[i] = data.getString(key12[i]);
-                            sdcur[i] = data.getString(cur_key[i]);
-                            sdmax_cur[i] = data.getString(max_cur_key[i]);
+                            buttonkey[i] = data.getString("H"+key12[i]);
+                            sdcur[i] = data.getString("H"+cur_key[i]);
+                            sdmax_cur[i] = data.getString("H"+max_cur_key[i]);
                             String[] sd1 = sdcur[i].split("\"");
                             String[] sd2 = sdmax_cur[i].split("\"");
                             String[] sd3 = buttonkey[i].split("\"");
@@ -840,10 +843,10 @@ public class ControlActivity extends Fragment {
                             Log.e("|||||||44444", String.valueOf(i));
                             Log.e("|||||||i012", String.valueOf(i012[i]));
                             Log.e("||on_cur_key[i]", on_cur_key[i]);
-                            sdon_cur[i] = data.getString(on_cur_key[i]);
-                            sdon_max_cur[i] = data.getString(max_on_cur_key[i]);
-                            sdoff_cur[i] = data.getString(off_cur_key[i]);
-                            sdoff_max_cur[i] = data.getString(max_off_cur_key[i]);
+                            sdon_cur[i] = data.getString("H"+on_cur_key[i]);
+                            sdon_max_cur[i] = data.getString("H"+max_on_cur_key[i]);
+                            sdoff_cur[i] = data.getString("H"+off_cur_key[i]);
+                            sdoff_max_cur[i] = data.getString("H"+max_off_cur_key[i]);
                             String[] sd1 = sdon_cur[i].split("\"");
                             String[] sd2 = sdon_max_cur[i].split("\"");
                             String[] sd3 = sdoff_cur[i].split("\"");

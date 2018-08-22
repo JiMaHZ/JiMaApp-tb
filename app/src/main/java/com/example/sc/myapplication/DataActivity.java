@@ -132,7 +132,7 @@ public class DataActivity extends Fragment {
                     for (JsonElement user : jsonArray) {
                         Device device = gson.fromJson(user, new TypeToken<Device>() {
                         }.getType());
-                        //Log.e("DeviceActivity", device.getValue());
+//                        Log.e("DeviceActivity", device.getValue());
                         value[i] = device.getValue();
                         Gson gson1 = new Gson();
                         Value value1 = gson1.fromJson(value[i], Value.class);
@@ -148,6 +148,7 @@ public class DataActivity extends Fragment {
                         if (rg1.equals(region1) && rg2.equals(region2) && category[i].equals("sensor")) {
                             String add = String.valueOf(call.request().url());
                             String[] devId = add.split("/");
+
                             for (int i = 0, ii = 0; i < i3; i++) {
                                 if (devId[7].equals(Idss[i])) {
                                     i = i3;
@@ -166,7 +167,7 @@ public class DataActivity extends Fragment {
                             name[i2] = value1.getName();
                             type[i2] = value1.getConfig().getType();
                             unit[i2] = value1.getConfig().getUnit();
-                            key[i2] = device.getKey();
+                            key[i2] = device.getKey().substring(1);
                             int key10 = Integer.parseInt(key[i2], 16);
                             int i111 = (key10 - 256) / 32;
                             int i222 = ((key10 - 256) % 32) / 4;
@@ -421,9 +422,9 @@ public class DataActivity extends Fragment {
                         try {
                             String[] sd = new String[10];
                             if (i7 == 1) {
-                                sd[i] = data.getString(key12[i]);
+                                sd[i] = data.getString("H"+key12[i]);
                             } else {
-                                sd[i] = data.getString(key1[i]);
+                                sd[i] = data.getString("H"+key1[i]);
                             }
                             String[] t1 = sd[i].split(",");
                             ts[i] = t1[0].substring(2);
@@ -451,9 +452,9 @@ public class DataActivity extends Fragment {
                     try {
                         String[] sd = new String[700];
                         if (i7 == 1) {
-                            sd[i] = data.getString(key12[i]);
+                            sd[i] = data.getString("H"+key12[i]);
                         } else {
-                            sd[i] = data.getString(key1[i]);
+                            sd[i] = data.getString("H"+key1[i]);
                         }
 
                         String[] t1 = sd[i].split(",");

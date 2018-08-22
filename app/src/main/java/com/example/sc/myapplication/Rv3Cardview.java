@@ -31,9 +31,14 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private int te;
     private int tw;
 
+
+
     private OnSwitchClickListener mOnSwitchClickListener;
     private OnButtonClickListener mOnButtonClickListener;
     private List<Type> typeList = new ArrayList<>();
+    private List<Type> bt1List = new ArrayList<>();
+    private List<Type> bt2List = new ArrayList<>();
+    private List<Type> bt3List = new ArrayList<>();
 
     public enum ITEM_TYPE {
         ITEM1,
@@ -63,23 +68,17 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     //初始化checkbox数据  暂时假设均为关闭
     private void initData() {
-        for (int i = 0; i < tw; i++) {
-
-//            if ((statuskeyList.size() != 0) && (statuskeyList.get(i).getStatuskey().equals("0001"))) {
-//                Type type = Type.Checked;
-//                typeList.add(type);
-//            } else if ((statuskeyList.size() != 0) && (statuskeyList.get(i).getStatuskey().equals("0000"))) {
-//                Type type = Type.UnCheck;
-//                typeList.add(type);
-//            }else {
+        for (int i = 0; i < tw+te; i++) {
+//            if (i<tw) {
                 Type type = Type.UnCheck;
                 typeList.add(type);
+//            } else  if (i<te+tw ){
+                bt1List.add(Type.UnCheck);
+                bt2List.add(Type.UnCheck);
+                bt3List.add(Type.UnCheck);
 //            }
-
-
-
-
         }
+
     }
 
     @Override
@@ -172,6 +171,11 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 public void onClick(View v) {
                     if (mOnButtonClickListener != null) {
                         mOnButtonClickListener.onClick(icardList.get(position), position, v);
+
+                        bt1List.set(position, Type.Checked);
+                        bt2List.set(position, Type.UnCheck);
+                        bt3List.set(position, Type.UnCheck);
+//                        ((Item2ViewHolder) holder).button3.setEnabled(true);
                     }
                 }
             });
@@ -180,6 +184,9 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 public void onClick(View v) {
                     if (mOnButtonClickListener != null) {
                         mOnButtonClickListener.onClick(icardList.get(position), position, v);
+                        bt1List.set(position, Type.UnCheck);
+                        bt2List.set(position, Type.Checked);
+                        bt3List.set(position, Type.UnCheck);
                     }
                 }
             });
@@ -188,9 +195,32 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 public void onClick(View v) {
                     if (mOnButtonClickListener != null) {
                         mOnButtonClickListener.onClick(icardList.get(position), position, v);
+                        bt1List.set(position, Type.UnCheck);
+                        bt2List.set(position, Type.UnCheck);
+                        bt3List.set(position, Type.Checked);
                     }
                 }
             });
+
+            if ((bt1List.size() !=0) && (bt2List.size() !=0) &&(bt3List.size() !=0) && (bt1List.get(position).equals(Type.Checked))&&(bt2List.get(position).equals(Type.UnCheck))&&(bt3List.get(position).equals(Type.UnCheck))) {
+                ((Item2ViewHolder) holder).button1.setEnabled(false);
+                ((Item2ViewHolder) holder).button2.setEnabled(true);
+                ((Item2ViewHolder) holder).button3.setEnabled(true);
+            } else if ((bt1List.size() !=0) && (bt2List.size() !=0) &&(bt3List.size() !=0) && (bt1List.get(position).equals(Type.UnCheck))&&(bt2List.get(position).equals(Type.Checked))&&(bt3List.get(position).equals(Type.UnCheck))) {
+                ((Item2ViewHolder) holder).button1.setEnabled(true);
+                ((Item2ViewHolder) holder).button2.setEnabled(false);
+                ((Item2ViewHolder) holder).button3.setEnabled(true);
+            } else if ((bt1List.size() !=0) && (bt2List.size() !=0) &&(bt3List.size() !=0) && (bt1List.get(position).equals(Type.UnCheck))&&(bt2List.get(position).equals(Type.UnCheck))&&(bt3List.get(position).equals(Type.Checked))) {
+                ((Item2ViewHolder) holder).button1.setEnabled(true);
+                ((Item2ViewHolder) holder).button2.setEnabled(true);
+                ((Item2ViewHolder) holder).button3.setEnabled(false);
+            } else {
+                ((Item2ViewHolder) holder).button1.setEnabled(true);
+                ((Item2ViewHolder) holder).button2.setEnabled(true);
+                ((Item2ViewHolder) holder).button3.setEnabled(true);
+            }
+
+
         }
     }
 

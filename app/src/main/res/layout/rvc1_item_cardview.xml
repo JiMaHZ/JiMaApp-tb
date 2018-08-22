@@ -51,10 +51,15 @@
         </LinearLayout>
         <Switch
             android:id="@+id/switch1"
-            android:layout_width="0.0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="false"
+            android:textOn=" "
+            android:textOff=" "
+            android:switchMinWidth="20dp"
+            android:thumb="@drawable/thumb"
+            android:track="@drawable/track"
             />
 
     </LinearLayout>
