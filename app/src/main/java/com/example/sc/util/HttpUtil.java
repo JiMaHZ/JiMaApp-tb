@@ -25,7 +25,7 @@ public class HttpUtil {
     public static void sendOkHttpPost(String address,String token,String method,String params,okhttp3.Callback callback){
         JSONObject jsonObject=new JSONObject();
         try {
-            jsonObject.put("method",method);
+            jsonObject.put("method","H"+method);
             jsonObject.put("params",params);
         } catch (JSONException e) {
             e.printStackTrace();

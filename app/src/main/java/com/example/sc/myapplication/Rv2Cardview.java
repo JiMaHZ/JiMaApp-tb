@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.sc.parse.DeviceLocation;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Rv2Cardview extends RecyclerView.Adapter<Rv2Cardview.ViewHolder> {
@@ -13,11 +16,13 @@ public class Rv2Cardview extends RecyclerView.Adapter<Rv2Cardview.ViewHolder> {
     private List<String> datas;
     private List<String> title;
     private List<String> times;
+    private List<DeviceLocation> DeviceLocationList = new ArrayList<>();
 
-    public Rv2Cardview(List<String> datas, List<String> title, List<String> times) {
+    public Rv2Cardview(List<String> datas, List<String> title, List<String> times,List<DeviceLocation> DeviceLocationList ) {
         this.datas = datas;
         this.title = title;
         this.times = times;
+        this.DeviceLocationList=DeviceLocationList;
     }
 
     /**
@@ -45,6 +50,7 @@ public class Rv2Cardview extends RecyclerView.Adapter<Rv2Cardview.ViewHolder> {
         holder.textView1.setText(title.get(position));
         holder.textView2.setText(datas.get(position));
         holder.textView3.setText(times.get(position));
+        holder.textView4.setText(DeviceLocationList.get(position).getLocation());
     }
 
     @Override
@@ -60,13 +66,14 @@ public class Rv2Cardview extends RecyclerView.Adapter<Rv2Cardview.ViewHolder> {
         public TextView textView1;
         public TextView textView2;
         public TextView textView3;
+        public TextView textView4;
 
         public ViewHolder(final View itemView) {
             super(itemView);
             textView2 = (TextView) itemView.findViewById(R.id.tv_title);
             textView1 = (TextView) itemView.findViewById(R.id.tv_data);
             textView3 = (TextView) itemView.findViewById(R.id.tv_time);
-
+            textView4 = (TextView) itemView.findViewById(R.id.devices_location);
 
             textView1.setOnClickListener(
                     new View.OnClickListener() {
@@ -87,6 +94,15 @@ public class Rv2Cardview extends RecyclerView.Adapter<Rv2Cardview.ViewHolder> {
                         }
                     });
             textView3.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (itemClickListener != null) {
+                                itemClickListener.onTextClick(v, getPosition());
+                            }
+                        }
+                    });
+            textView4.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

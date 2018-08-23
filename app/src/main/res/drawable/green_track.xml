@@ -6,7 +6,7 @@
     <corners android:radius="20dp"/>
     <!-- 变化率 -->
     <gradient
-        android:endColor="#b1e370"
-        android:startColor="#b1e370" />
+        android:endColor="#8fc36c"
+        android:startColor="#8fc36c" />
 
 </shape>

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sc.parse.Device;
+import com.example.sc.parse.DeviceLocation;
 import com.example.sc.parse.IniStatus;
 import com.example.sc.parse.Item;
 import com.example.sc.parse.Value;
@@ -63,11 +64,12 @@ public class ControlActivity extends Fragment {
     private List<String> control_addrte = new ArrayList<>();
 //    public List<String> check_values = new ArrayList<>();
     public List<String> button_values = new ArrayList<>();
-
+    private List<DeviceLocation> DeviceLocationList = new ArrayList<>();
 
     public int[] i0 = new int[700];
     public List<Item> icardList = new ArrayList<>();
     public List<IniStatus> statuskeyList = new ArrayList<>();
+
     // public Item icard =new Item();
     public int[] i012 = new int[700];
     public String Id0;
@@ -85,9 +87,11 @@ public class ControlActivity extends Fragment {
     private String[] key = new String[700];
     private String[] ts = new String[700];
     private String[] time = new String[700];
+    private String[] deviceid = new String[700];
     private String[] key12 = new String[700];
     private String[] name12 = new String[700];
     private String[] type12 = new String[700];
+    private String[] deviceid12 = new String[700];
     private String[] unit12 = new String[700];
     private String devId = new String();
     private Handler handler = new Handler();
@@ -202,6 +206,7 @@ public class ControlActivity extends Fragment {
                             String[] devId = add.split("/");
                             Log.e("add", add);
                             Log.e("devId[7]:", devId[7]);
+                            deviceid[i2] = devId[7];    //之后用于控制命令（未排序）
                             for (int i = 0, ii = 0; i < i3; i++) {
                                 if (devId[7].equals(Idss[i])) {
                                     i = i3;
@@ -279,6 +284,7 @@ public class ControlActivity extends Fragment {
                     }
                     //复制数组，每组i2个数据
                     System.arraycopy(key, 0, key12, 0, i2);
+                    System.arraycopy(deviceid, 0, deviceid12, 0, i2);
                     System.arraycopy(name, 0, name12, 0, i2);
                     System.arraycopy(type, 0, type12, 0, i2);
                     System.arraycopy(i0, 0, i012, 0, i2);
@@ -288,16 +294,16 @@ public class ControlActivity extends Fragment {
                     System.arraycopy(off_cur_keyte, 0, off_cur_key, 0, i2);
                     System.arraycopy(max_on_cur_keyte, 0, max_on_cur_key, 0, i2);
                     System.arraycopy(max_off_cur_keyte, 0, max_off_cur_key, 0, i2);
-                    for (int i = 0; i < i2; i++) {
-                        Log.e("key", key12[i]);
-                        Log.e("name", name12[i]);
-                        Log.e("type", type12[i]);
-                        if (i0[i] == 0) {
-                            Log.e("cur_keytw[i]", cur_keytw[i]);
-                        } else if (i0[i] == 1) {
-                            Log.e("on_cur_keyte[i]", on_cur_keyte[i]);
-                        }
-                    }
+//                    for (int i = 0; i < i2; i++) {
+//                        Log.e("key", key12[i]);
+//                        Log.e("name", name12[i]);
+//                        Log.e("type", type12[i]);
+//                        if (i0[i] == 0) {
+//                            Log.e("cur_keytw[i]", cur_keytw[i]);
+//                        } else if (i0[i] == 1) {
+//                            Log.e("on_cur_keyte[i]", on_cur_keyte[i]);
+//                        }
+//                    }
 
                     // 进行冒泡从小到大排列 key12、name12、type12、i012
                     for (int i = 0; i < i2 - 1; i++) {
@@ -312,6 +318,9 @@ public class ControlActivity extends Fragment {
                                 temp = type12[i];
                                 type12[i] = type12[j];
                                 type12[j] = temp;
+                                temp = deviceid12[i];
+                                deviceid12[i] = deviceid12[j];
+                                deviceid12[j] = temp;
 
                                 if (i012[i] + i012[j] == 1 && i012[i] == 0) {
                                     cur_key[j] = cur_key[i];
@@ -377,12 +386,22 @@ public class ControlActivity extends Fragment {
                             icard.setLocation("1");
                         }
                         icardList.add(icard);
+                        int key10= Integer.parseInt(key12[i],16);
+//
+                        int i111=(key10-8448)/16;
+                        int i222=((key10-8448)%16)/4;
+                        DeviceLocation DeviceLocation =new DeviceLocation();
+
+                        DeviceLocation.setLocation("#"+String.valueOf(i111+1)+"-"+String.valueOf(i222+1));
+
+                        DeviceLocationList.add(DeviceLocation);
+
 //                        Log.e("icardList", String.valueOf(icardList));
 //                        Log.e("icardList|||||||", String.valueOf(icardList.get(i).getLocation()));
-                        Log.e("key12", key12[i]);
-                        Log.e("name12", name12[i]);
-                        Log.e("type12", type12[i]);
-                        Log.e("i012", String.valueOf(i012[i]));
+//                        Log.e("key12", key12[i]);
+//                        Log.e("name12", name12[i]);
+//                        Log.e("type12", type12[i]);
+//                        Log.e("i012", String.valueOf(i012[i]));
                         if (i012[i] == 0) {
                             Log.e("cur_key[i]", cur_key[i]);
                         } else if (i012[i] == 1) {
@@ -501,7 +520,7 @@ public class ControlActivity extends Fragment {
                 }
             }
         };
-        rvAdapter = new Rv3Cardview(icardList, datas, title, tw, te, statuskeyList);
+        rvAdapter = new Rv3Cardview(icardList, datas, title, tw, te, statuskeyList,DeviceLocationList);
         recyclerView.setLayoutManager(new LinearLayoutManager(ControlActivity.this.getActivity()));
         recyclerView.setAdapter(rvAdapter);
         rvAdapter.setItemClickListener(new Rv3Cardview.OnItemClickListener() {
@@ -526,7 +545,7 @@ public class ControlActivity extends Fragment {
                 Log.e("token********",token);
                 Log.e("key12********",key12[position]);
                 if (isChecked){
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/40d777f0-a428-11e8-ad4b-4dd707116a31",token,key12[position],"0001",new okhttp3.Callback(){
+                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/"+deviceid12[position],token,key12[position],"0001",new okhttp3.Callback(){
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -539,7 +558,7 @@ public class ControlActivity extends Fragment {
                         }
                     });
                 } else {
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/40d777f0-a428-11e8-ad4b-4dd707116a31",token,key12[position],"0000",new okhttp3.Callback(){
+                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/"+deviceid12[position],token,key12[position],"0000",new okhttp3.Callback(){
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -564,9 +583,9 @@ public class ControlActivity extends Fragment {
             public void onClick(Item item, int position, View view) {
 
 
-                btn1=(Button)view.findViewById(R.id.bt_zhengzhuan);
-                btn2=(Button)view.findViewById(R.id.bt_stop);
-                btn3=(Button)view.findViewById(R.id.bt_fanzhuan);
+//                btn1=(Button)view.findViewById(R.id.bt_zhengzhuan);
+//                btn2=(Button)view.findViewById(R.id.bt_stop);
+//                btn3=(Button)view.findViewById(R.id.bt_fanzhuan);
 
                 String b = "";
                 if (view instanceof Button) {
@@ -577,7 +596,7 @@ public class ControlActivity extends Fragment {
                 }
                 String t = ControlActivity.this.title.get(position);
                 if ( b.equals("正转")){
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/40d777f0-a428-11e8-ad4b-4dd707116a31",token,key12[position],"0009",new okhttp3.Callback(){
+                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/"+deviceid12[position],token,key12[position],"0009",new okhttp3.Callback(){
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -587,15 +606,15 @@ public class ControlActivity extends Fragment {
                             Log.e("responseData*******",responseData);
                             if ((responseData != null)&&(responseData !="Device with requested id wasn't found!")){
                                 Log.e("Respond*********",  "已正转");
-                                Toast.makeText(getActivity(), "已正转", Toast.LENGTH_SHORT).show();
-                                    b1 = false;
-                                    b2 = true;
-                                    b3 = true;
+//                                Toast.makeText(getActivity(), "已正转", Toast.LENGTH_SHORT).show();
+//                                    b1 = false;
+//                                    b2 = true;
+//                                    b3 = true;
                             }
                         }
                     });//6b1c7100-46ae-11e8-8280-65869ac1d365
                 } else if ( b.equals("停止")) {
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/40d777f0-a428-11e8-ad4b-4dd707116a31", token, key12[position], "0008", new okhttp3.Callback() {
+                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/"+deviceid12[position], token, key12[position], "0008", new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -606,15 +625,15 @@ public class ControlActivity extends Fragment {
                             Log.e("responseData*******",responseData);
                             if ((responseData != null) && (responseData != "Device with requested id wasn't found!")) {
                                 Log.e("Respond*********", "已停止");
-                                Toast.makeText(getActivity(), "已停止", Toast.LENGTH_SHORT).show();
-                                b1 = true;
-                                b2 = false;
-                                b3 = true;
+//                                Toast.makeText(getActivity(), "已停止", Toast.LENGTH_SHORT).show();
+//                                b1 = true;
+//                                b2 = false;
+//                                b3 = true;
                             }
                         }
                     });
                 } else if ( b.equals("反转")) {
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/40d777f0-a428-11e8-ad4b-4dd707116a31", token, key12[position], "000B", new okhttp3.Callback() {
+                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/"+deviceid12[position], token, key12[position], "000B", new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -625,10 +644,10 @@ public class ControlActivity extends Fragment {
                             Log.e("responseData*******",responseData);
                             if ((responseData != null) && (responseData != "Device with requested id wasn't found!")) {
                                 Log.e("Respond*********", "已反转");
-                                Toast.makeText(getActivity(), "已反转", Toast.LENGTH_SHORT).show();
-                                b1 = true;
-                                b2 = false;
-                                b3 = true;
+//                                Toast.makeText(getActivity(), "已反转", Toast.LENGTH_SHORT).show();
+//                                b1 = true;
+//                                b2 = false;
+//                                b3 = true;
                             }
                         }
                     });
@@ -639,7 +658,7 @@ public class ControlActivity extends Fragment {
 
 //                ((Button) view).setEnabled(false);
 
-                Toast.makeText(getActivity(), "点击了" + t + "的" + b+String.valueOf(position), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "点击了" + t + "的" + b+String.valueOf(position), Toast.LENGTH_SHORT).show();
 
                 //也可以通过view.getId()来判断是点击了哪一个button，然后进行对应的处理
             }
@@ -656,8 +675,8 @@ public class ControlActivity extends Fragment {
             super.onOpen(webSocket, response);
 
             for (int ii = 0; ii < i3; ii++) {
-                Log.e("i1", "i1 " + i3);
-                Log.e("i1", "IDss " + Idss[ii]);
+//                Log.e("i1", "i1 " + i3);
+//                Log.e("i1", "IDss " + Idss[ii]);
                 mSocket = webSocket;
                 //连接成功后，发送登录信息"{\"tsSubCmds\":[{\"entityType\":\"DEVICE\",\"entityId\":\"c70f09c0-3c4d-11e8-8280-65869ac1d365\",\"scope\":\"LATEST_TELEMETRY\",\"cmdId\":2}],\"historyCmds\":[],\"attrSubCmds\":[{\"entityType\":\"DEVICE\",\"entityId\":\"c70f09c0-3c4d-11e8-8280-65869ac1d365\",\"scope\":\"CLIENT_SCOPE\",\"cmdId\":1}]}"
                 final String message = "{\"tsSubCmds\":[{\"entityType\":\"DEVICE\",\"entityId\":\"" + Idss[ii] + "\",\"scope\":\"LATEST_TELEMETRY\",\"cmdId\":2}],\"historyCmds\":[],\"attrSubCmds\":[{\"entityType\":\"DEVICE\",\"entityId\":\"" + Idss[ii] + "\",\"scope\":\"CLIENT_SCOPE\",\"cmdId\":1}]}";
@@ -694,12 +713,12 @@ public class ControlActivity extends Fragment {
                     Log.e("i2", "i2 " + i2);
                     ParseJSONWithJSONObject(text);
                     for (int i = 0; i < i2; i++) {
-//                        IniStatus statuskey = new IniStatus();
+                        IniStatus statuskey = new IniStatus();
                         //Log.e("Data",data.getData().getKey1()[i]);
                         //strings=data.getData().getKey();
                         //Log.e("Data", name[i] + " " + type[i] + " " + strings[i] + " " + unit[i]);
                         if (i012[i] == 0) {
-                            IniStatus statuskey = new IniStatus();
+//                            IniStatus statuskey = new IniStatus();
                             statuskey.setStatuskey(button_value[i]);
                             statuskeyList.add(statuskey);
                             button_values.set(i, (button_value[i]));
@@ -707,16 +726,19 @@ public class ControlActivity extends Fragment {
 //                            icard.setLocation("0");
                             title.set(i, (name12[i]));
                             //type[i] + ":\n"
-                            datas.set(i, ("当前电流 " + strings[i] + " " + "A   " + "最大电流 " + strings2[i] + " " + "A"+button_values.get(i)+" "+statuskeyList.get(i).getStatuskey()));
+                            datas.set(i, ("当前电流 " + strings[i] + " " + "A"  + "\n"+ "最大电流 " + strings2[i] + " " + "A"));
 //                                times.set(i,(time[i]));
                         } else if (i012[i] == 1) {
 //                            icard.setLocation("1");
+                            statuskey.setStatuskey(button_value[i]);
+                            statuskeyList.add(statuskey);
                             title.set(i, (name12[i]));
                             //type[i] + ":\n"
                             datas.set(i, ("正转当前电流 " + strings[i] + " " + "A" + "\n" + "正转最大电流 " + strings2[i] + " " + "A" + "\n"
                                     + "反转当前电流 " + strings3[i] + " " + "A" + "\n" + "反转最大电流 " + strings4[i] + " " + "A"));
                         }
 //                        icardList.add(icard);
+//                        statuskeyList.add(statuskey);
                         Message message1 = new Message();
                         message1.what = UPDATE_TEXT;
                         handler.sendMessage(message1);
@@ -783,8 +805,8 @@ public class ControlActivity extends Fragment {
                                 String[] sd2 = sdmax_cur[i].split(",");
                                 strings[i] = sd1[1];
                                 strings2[i] = sd2[1];
-                                Log.e("DATA", sd1[1]);
-                                Log.e("DATA", sd2[1]);       //如果是 ，首先下载什么
+//                                Log.e("DATA", sd1[1]);
+//                                Log.e("DATA", sd2[1]);       //如果是 ，首先下载什么
                             } else if (i012[i] == 1) {
                                 sdon_cur[i] = data.getString("H"+on_cur_key[i]);
                                 sdon_max_cur[i] = data.getString("H"+max_on_cur_key[i]);
@@ -798,10 +820,10 @@ public class ControlActivity extends Fragment {
                                 strings2[i] = sd2[1];
                                 strings3[i] = sd3[1];
                                 strings4[i] = sd4[1];
-                                Log.e("DATA", sd1[1]);
-                                Log.e("DATA", sd2[1]);
-                                Log.e("DATA", sd3[1]);
-                                Log.e("DATA", sd4[1]);
+//                                Log.e("DATA", sd1[1]);
+//                                Log.e("DATA", sd2[1]);
+//                                Log.e("DATA", sd3[1]);
+//                                Log.e("DATA", sd4[1]);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -819,13 +841,13 @@ public class ControlActivity extends Fragment {
                         String[] sdoff_cur = new String[700];
                         String[] sdoff_max_cur = new String[700];
                         String[] buttonkey = new String[700];
-                        Log.e("||||||||||||||", "11111111111");
+//                        Log.e("||||||||||||||", "11111111111");
                         if (i012[i] == 0) {
-                            Log.e("||||||||||||||", "33333");
-                            Log.e("|||||||33333", String.valueOf(i));
-                            Log.e("|||||||i012", String.valueOf(i012[i]));
-                            Log.e("||||data", data.toString());
-                            Log.e("||||cur_key[i]", cur_key[i]);
+//                            Log.e("||||||||||||||", "33333");
+//                            Log.e("|||||||33333", String.valueOf(i));
+//                            Log.e("|||||||i012", String.valueOf(i012[i]));
+//                            Log.e("||||data", data.toString());
+//                            Log.e("||||cur_key[i]", cur_key[i]);
                             buttonkey[i] = data.getString("H"+key12[i]);
                             sdcur[i] = data.getString("H"+cur_key[i]);
                             sdmax_cur[i] = data.getString("H"+max_cur_key[i]);
@@ -835,14 +857,15 @@ public class ControlActivity extends Fragment {
                             strings[i] = sd1[1];
                             strings2[i] = sd2[1];
                             button_value[i] = sd3[1];
-                            Log.e("key*********", key12[i]);
-                            Log.e("sd3*********", sd3[1]);
-                            Log.e("button_value********", button_value[i]);
+//                            Log.e("key*********", key12[i]);
+//                            Log.e("sd3*********", sd3[1]);
+//                            Log.e("button_value********", button_value[i]);
                         } else if (i012[i] == 1) {
-                            Log.e("||||||||||||||", "44444");
-                            Log.e("|||||||44444", String.valueOf(i));
-                            Log.e("|||||||i012", String.valueOf(i012[i]));
-                            Log.e("||on_cur_key[i]", on_cur_key[i]);
+//                            Log.e("||||||||||||||", "44444");
+//                            Log.e("|||||||44444", String.valueOf(i));
+//                            Log.e("|||||||i012", String.valueOf(i012[i]));
+//                            Log.e("||on_cur_key[i]", on_cur_key[i]);
+                            buttonkey[i] = data.getString("H"+key12[i]);
                             sdon_cur[i] = data.getString("H"+on_cur_key[i]);
                             sdon_max_cur[i] = data.getString("H"+max_on_cur_key[i]);
                             sdoff_cur[i] = data.getString("H"+off_cur_key[i]);
@@ -851,14 +874,19 @@ public class ControlActivity extends Fragment {
                             String[] sd2 = sdon_max_cur[i].split("\"");
                             String[] sd3 = sdoff_cur[i].split("\"");
                             String[] sd4 = sdoff_max_cur[i].split("\"");
+                            String[] sd5 = buttonkey[i].split("\"");
                             strings[i] = sd1[1];
                             strings2[i] = sd2[1];
                             strings3[i] = sd3[1];
                             strings4[i] = sd4[1];
+                            button_value[i] = sd5[1];
 //                            Log.e("DATA",sd1[1]);
 //                            Log.e("DATA",sd2[1]);
 //                            Log.e("DATA",sd3[1]);
 //                            Log.e("DATA",sd4[1]);
+//                            Log.e("key*********", key12[i]);
+//                            Log.e("sd5*********", sd5[1]);
+//                            Log.e("button_value********", button_value[i]);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

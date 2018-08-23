@@ -17,7 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
+import com.example.sc.parse.DeviceLocation;
 import com.example.sc.parse.App;
 import com.example.sc.parse.Device;
 import com.example.sc.parse.Value;
@@ -61,6 +61,10 @@ public class DataActivity extends Fragment {
     private List<String> datas = new ArrayList<>();
     private List<String> title = new ArrayList<>();
     private List<String> times = new ArrayList<>();
+    private List<DeviceLocation> DeviceLocationList = new ArrayList<>();
+
+//    private String[] DeviceLocationX = new String[700];
+//    private String[] DeviceLocationY = new String[700];
     private String[] name = new String[700];
     private String[] type = new String[700];
     private String[] unit = new String[700];
@@ -89,6 +93,8 @@ public class DataActivity extends Fragment {
     public String[] strings = new String[700];
     public String region1, region2;
     int i1 = 1, i2 = 0, i = 0, i3 = 0, i4 = 0, i5 = 0, i6 = 0, i7 = 0, i8 = 0;
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -171,6 +177,13 @@ public class DataActivity extends Fragment {
                             int key10 = Integer.parseInt(key[i2], 16);
                             int i111 = (key10 - 256) / 32;
                             int i222 = ((key10 - 256) % 32) / 4;
+                            DeviceLocation DeviceLocation =new DeviceLocation();
+
+                            DeviceLocation.setLocation("#"+String.valueOf(i111+1)+"-"+String.valueOf(i222+1));
+
+                            DeviceLocationList.add(DeviceLocation);
+
+
                             i5 = i111 * 8 + i222;
                             if (i5 > 511) {
                                 i5 = i5 - 256;
@@ -178,9 +191,9 @@ public class DataActivity extends Fragment {
                             name12[i5] = name[i2];
                             type12[i5] = type[i2];
                             unit12[i5] = unit[i2];
-                            if (key[i2].equals("0100")) {
-                                i7 = 1;
-                            }
+//                            if (key[i2].equals("0100")) {
+//                                i7 = 1;
+//                            }
                             JSONObject jsonObject = new JSONObject();
 
                             try {
@@ -297,7 +310,7 @@ public class DataActivity extends Fragment {
                 }
             }
         };
-        rvAdapter = new Rv2Cardview(title, datas, times);
+        rvAdapter = new Rv2Cardview(title, datas, times,DeviceLocationList);
         recyclerView.setLayoutManager(new LinearLayoutManager(DataActivity.this.getActivity()));
         recyclerView.setAdapter(rvAdapter);
         rvAdapter.setItemClickListener(new Rv2Cardview.OnItemClickListener() {
@@ -409,18 +422,22 @@ public class DataActivity extends Fragment {
                         if (i6 > 511) {
                             i6 = i6 - 256;
                         }
+
                         key12[i6] = key1[i];
                         Log.e("key1[i]", key1[i]);
                         Log.e("ii", "i=" + i);
+                        Log.e("key12[i]", key12[i6]);
+                        Log.e("i6", "i6="+i6);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
                 }
                 if (data.length() == 1) {
-                    for (int i = i4; i < i2; i++) {
+                    for (int i = i4; i < 700; i++) {
                         try {
                             String[] sd = new String[10];
+                            Log.e("H+key12[i]", "H"+key12[i]);
                             if (i7 == 1) {
                                 sd[i] = data.getString("H"+key12[i]);
                             } else {
@@ -448,15 +465,26 @@ public class DataActivity extends Fragment {
                     }
                 }
                 final int l = data.length();
-                for (int i = i4; i < i2; i++) {
+                for (int i = i4; i < 700; i++) {
                     try {
                         String[] sd = new String[700];
+                        String[] Hkey = new String[700];
+//                        Log.e("H+i", String.valueOf(i));
+//                        Log.e("H+key12[i]", "H"+key12[i]);
+//                        String Hkey =new String();
+//                        if (key12[i].isEmpty() ) {
+//                            Hkey[i] = "H" + key12[i];
+////                            Log.e("Hkey", Hkey);
+//                        } else {
+//                            Hkey[i] = null;
+//                        }
+
                         if (i7 == 1) {
-                            sd[i] = data.getString("H"+key12[i]);
+                            sd[i] = data.getString(key12[i]);
                         } else {
                             sd[i] = data.getString("H"+key1[i]);
                         }
-
+//                        Log.e("||||sd[i]", "H"+sd[i]);
                         String[] t1 = sd[i].split(",");
                         ts[i] = t1[0].substring(2);
                         Long t = Long.valueOf(ts[i]);

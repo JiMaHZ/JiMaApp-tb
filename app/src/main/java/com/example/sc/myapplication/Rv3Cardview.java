@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import com.example.sc.parse.DeviceLocation;
 import com.example.sc.parse.Item;
 import com.example.sc.parse.IniStatus;
 
@@ -28,6 +30,7 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //    private  String token;
     private List<Item> icardList;
     private List<IniStatus> statuskeyList;
+    private List<DeviceLocation> DeviceLocationList = new ArrayList<>();
     private int te;
     private int tw;
 
@@ -51,14 +54,14 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
-    public Rv3Cardview(List<Item> icardList, List<String> datas, List<String> title, int tw, int te, List<IniStatus> statuskeyList) {
+    public Rv3Cardview(List<Item> icardList, List<String> datas, List<String> title, int tw, int te, List<IniStatus> statuskeyList,List<DeviceLocation>DeviceLocationList) {
         this.title = title;
         this.datas = datas;
         this.icardList = icardList;
         this.tw = tw;
         this.statuskeyList = statuskeyList;
         this.te = te;
-
+        this.DeviceLocationList = DeviceLocationList;
 //        this.control_addrtw=control_addrtw;
 //        this.control_addrte=control_addrte;
 //        this.Id =Id;
@@ -101,13 +104,14 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (holder instanceof Item1ViewHolder) {
             ((Item1ViewHolder) holder).mTextView1.setText(title.get(position));
             ((Item1ViewHolder) holder).mTextView2.setText(datas.get(position));
+            ((Item1ViewHolder) holder).mTextView3.setText(DeviceLocationList.get(position).getLocation());
             ((Item1ViewHolder) holder).aSwitch.setOnCheckedChangeListener(null);
-                if ((statuskeyList.size() != 0) &&(statuskeyList.get(position).getStatuskey().equals("0001"))){
+                if ((statuskeyList.size() != 0) &&((statuskeyList.get(position).getStatuskey().equals("0001"))||(statuskeyList.get(position).getStatuskey().equals("0005")))){
 //                    ((Item1ViewHolder) holder).aSwitch.setChecked(true);
                     typeList.set(position, Type.Checked);
                     statuskeyList.get(position).setStatuskey("INI");
 //                    typeList.add(type);
-                } else if ((statuskeyList.size() != 0) &&(statuskeyList.get(position).getStatuskey().equals("0000"))) {
+                } else if ((statuskeyList.size() != 0) &&((statuskeyList.get(position).getStatuskey().equals("0000"))||(statuskeyList.get(position).getStatuskey().equals("0004")))) {
 //                    ((Item1ViewHolder) holder).aSwitch.setChecked(false);
                     typeList.set(position, Type.UnCheck);
                     statuskeyList.get(position).setStatuskey("INI");
@@ -165,7 +169,23 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if (holder instanceof Item2ViewHolder) {
             ((Item2ViewHolder) holder).mTextView1.setText(title.get(position));
             ((Item2ViewHolder) holder).mTextView2.setText(datas.get(position));
-            ((Item2ViewHolder) holder).mTextView2.setText(datas.get(position));
+            ((Item2ViewHolder) holder).mTextView3.setText(DeviceLocationList.get(position).getLocation());
+            if ((statuskeyList.size() != 0) &&((statuskeyList.get(position).getStatuskey().equals("0008")) ||(statuskeyList.get(position).getStatuskey().equals("0000")))) {
+                bt1List.set(position, Type.UnCheck);
+                bt2List.set(position, Type.Checked);
+                bt3List.set(position, Type.UnCheck);
+                statuskeyList.get(position).setStatuskey("INI");
+            } else if((statuskeyList.size() != 0) &&((statuskeyList.get(position).getStatuskey().equals("0009"))||(statuskeyList.get(position).getStatuskey().equals("0003")))) {
+                bt1List.set(position, Type.Checked);
+                bt2List.set(position, Type.UnCheck);
+                bt3List.set(position, Type.UnCheck);
+                statuskeyList.get(position).setStatuskey("INI");
+            } else if((statuskeyList.size() != 0) &&((statuskeyList.get(position).getStatuskey().equals("000B"))||(statuskeyList.get(position).getStatuskey().equals("0004")))) {
+                bt1List.set(position, Type.UnCheck);
+                bt2List.set(position, Type.UnCheck);
+                bt3List.set(position, Type.Checked);
+                statuskeyList.get(position).setStatuskey("INI");
+            }
             ((Item2ViewHolder) holder).button1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -284,12 +304,14 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static class Item1ViewHolder extends RecyclerView.ViewHolder {
         TextView mTextView1;
         TextView mTextView2;
+        TextView mTextView3;
         Switch aSwitch;
 
         public Item1ViewHolder(View itemView) {
             super(itemView);
             mTextView1 = (TextView) itemView.findViewById(R.id.tv_name);
             mTextView2 = (TextView) itemView.findViewById(R.id.tv_data1);
+            mTextView3 = (TextView) itemView.findViewById(R.id.devices_location);
             aSwitch = (Switch) itemView.findViewById(R.id.switch1);
 
         }
@@ -299,12 +321,14 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         TextView mTextView1;
         TextView mTextView2;
+        TextView mTextView3;
         Button button1, button2, button3;
 
         public Item2ViewHolder(View itemView) {
             super(itemView);
             mTextView1 = (TextView) itemView.findViewById(R.id.tv_name);
             mTextView2 = (TextView) itemView.findViewById(R.id.tv_data1);
+            mTextView3 = (TextView) itemView.findViewById(R.id.devices_location);
             button1 = (Button) itemView.findViewById(R.id.bt_zhengzhuan);
             button2 = (Button) itemView.findViewById(R.id.bt_stop);
             button3 = (Button) itemView.findViewById(R.id.bt_fanzhuan);
