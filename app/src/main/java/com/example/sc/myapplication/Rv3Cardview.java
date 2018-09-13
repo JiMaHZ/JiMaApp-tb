@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -54,7 +55,7 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
-    public Rv3Cardview(List<Item> icardList, List<String> datas, List<String> title, int tw, int te, List<IniStatus> statuskeyList,List<DeviceLocation>DeviceLocationList) {
+    public Rv3Cardview(List<Item> icardList, List<String> datas, List<String> title,List<String> button_values, int tw, int te, List<IniStatus> statuskeyList,List<DeviceLocation>DeviceLocationList) {
         this.title = title;
         this.datas = datas;
         this.icardList = icardList;
@@ -62,6 +63,7 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.statuskeyList = statuskeyList;
         this.te = te;
         this.DeviceLocationList = DeviceLocationList;
+        this.button_values = button_values;
 //        this.control_addrtw=control_addrtw;
 //        this.control_addrte=control_addrte;
 //        this.Id =Id;
@@ -102,6 +104,17 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 //        holder.itemView.setTag(position);
         if (holder instanceof Item1ViewHolder) {
+
+            if ((button_values.size() != 0)&&((button_values.get(position).equals("0001"))||(button_values.get(position).equals("0005")))){
+                ((Item1ViewHolder) holder).lamp1.setImageResource(R.drawable.lamp_green);
+                typeList.set(position, Type.Checked);
+            } else if((button_values.size() != 0)&&((button_values.get(position).equals("0000"))||(button_values.get(position).equals("0004")))){
+                ((Item1ViewHolder) holder).lamp1.setImageResource(R.drawable.lamp_gray);
+                typeList.set(position, Type.UnCheck);
+            }else{
+                ((Item1ViewHolder) holder).lamp1.setImageResource(R.drawable.lamp_gray);
+            }
+
             ((Item1ViewHolder) holder).mTextView1.setText(title.get(position));
             ((Item1ViewHolder) holder).mTextView2.setText(datas.get(position));
             ((Item1ViewHolder) holder).mTextView3.setText(DeviceLocationList.get(position).getLocation());
@@ -161,15 +174,38 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             //保留原有位置
             if (typeList.get(position).equals(Type.Checked) ) {
             	((Item1ViewHolder) holder).aSwitch.setChecked(true);
+//                ((Item1ViewHolder) holder).lamp1.setImageResource(R.drawable.lamp_green);
             } else if (typeList.get(position).equals(Type.UnCheck)) {
             	((Item1ViewHolder) holder).aSwitch.setChecked(false);
+//                ((Item1ViewHolder) holder).lamp1.setImageResource(R.drawable.lamp_gray);
             } else {
             	((Item1ViewHolder) holder).aSwitch.setChecked(false);
+//                ((Item1ViewHolder) holder).lamp1.setImageResource(R.drawable.lamp_gray);
             }
         } else if (holder instanceof Item2ViewHolder) {
             ((Item2ViewHolder) holder).mTextView1.setText(title.get(position));
             ((Item2ViewHolder) holder).mTextView2.setText(datas.get(position));
             ((Item2ViewHolder) holder).mTextView3.setText(DeviceLocationList.get(position).getLocation());
+            if ((button_values.size() != 0)&&((button_values.get(position).equals("0009"))||(button_values.get(position).equals("0003")))){
+                ((Item2ViewHolder) holder).lamp2.setImageResource(R.drawable.lamp_green);
+                bt1List.set(position, Type.Checked);
+                bt2List.set(position, Type.UnCheck);
+                bt3List.set(position, Type.UnCheck);
+            } else if((button_values.size() != 0)&&((button_values.get(position).equals("0008"))||(button_values.get(position).equals("0000")))){
+                ((Item2ViewHolder) holder).lamp2.setImageResource(R.drawable.lamp_gray);
+                bt1List.set(position, Type.UnCheck);
+                bt2List.set(position, Type.Checked);
+                bt3List.set(position, Type.UnCheck);
+            }else if((button_values.size() != 0)&&((button_values.get(position).equals("000B"))||(button_values.get(position).equals("0004")))){
+                ((Item2ViewHolder) holder).lamp2.setImageResource(R.drawable.lamp_blue);
+                bt1List.set(position, Type.UnCheck);
+                bt2List.set(position, Type.UnCheck);
+                bt3List.set(position, Type.Checked);
+
+            }else{
+                ((Item2ViewHolder) holder).lamp2.setImageResource(R.drawable.lamp_gray);
+            }
+
             if ((statuskeyList.size() != 0) &&((statuskeyList.get(position).getStatuskey().equals("0008")) ||(statuskeyList.get(position).getStatuskey().equals("0000")))) {
                 bt1List.set(position, Type.UnCheck);
                 bt2List.set(position, Type.Checked);
@@ -306,6 +342,7 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView mTextView2;
         TextView mTextView3;
         Switch aSwitch;
+        public ImageView lamp1;
 
         public Item1ViewHolder(View itemView) {
             super(itemView);
@@ -313,6 +350,7 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             mTextView2 = (TextView) itemView.findViewById(R.id.tv_data1);
             mTextView3 = (TextView) itemView.findViewById(R.id.devices_location);
             aSwitch = (Switch) itemView.findViewById(R.id.switch1);
+            lamp1=(ImageView) itemView.findViewById(R.id.lamp);
 
         }
     }
@@ -323,6 +361,7 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView mTextView2;
         TextView mTextView3;
         Button button1, button2, button3;
+        public ImageView lamp2;
 
         public Item2ViewHolder(View itemView) {
             super(itemView);
@@ -332,6 +371,8 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             button1 = (Button) itemView.findViewById(R.id.bt_zhengzhuan);
             button2 = (Button) itemView.findViewById(R.id.bt_stop);
             button3 = (Button) itemView.findViewById(R.id.bt_fanzhuan);
+            lamp2=(ImageView) itemView.findViewById(R.id.lamp);
+
 
 
 //            button1.setOnClickListener(new View.OnClickListener(){

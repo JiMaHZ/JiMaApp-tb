@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sc.parse.App;
 import com.example.sc.parse.Device;
 import com.example.sc.parse.DeviceLocation;
 import com.example.sc.parse.IniStatus;
@@ -169,7 +170,7 @@ public class ControlActivity extends Fragment {
         token = pref.getString("token", "");
 //        token0 = token;
         for (int ii = 0; ii < i1; ii++) {
-            String url1 = "http://140.143.23.199:8080/api/plugins/telemetry/DEVICE/" + Id[ii] + "/values/attributes/SERVER_SCOPE";
+            String url1 = App.baseURL + "/api/plugins/telemetry/DEVICE/" + Id[ii] + "/values/attributes/SERVER_SCOPE";
             Log.e("DeviceActivity", url1);
             HttpUtil.sendOkHttpRequest(url1, token, new okhttp3.Callback() {
 
@@ -427,7 +428,7 @@ public class ControlActivity extends Fragment {
                 }
             }
         }
-        String url = "ws://140.143.23.199:8080/api/ws/plugins/telemetry?token=" + token;
+        String url = App.baseWsURL + "/api/ws/plugins/telemetry?token=" + token;
         //tvOutput = (TextView) findViewById(R.id.output);
         Log.e("Data", url);
         /*for (int i = 0; i < e; i++) {
@@ -520,7 +521,7 @@ public class ControlActivity extends Fragment {
                 }
             }
         };
-        rvAdapter = new Rv3Cardview(icardList, datas, title, tw, te, statuskeyList,DeviceLocationList);
+        rvAdapter = new Rv3Cardview(icardList, datas, title,button_values, tw, te, statuskeyList,DeviceLocationList);
         recyclerView.setLayoutManager(new LinearLayoutManager(ControlActivity.this.getActivity()));
         recyclerView.setAdapter(rvAdapter);
         rvAdapter.setItemClickListener(new Rv3Cardview.OnItemClickListener() {
@@ -545,7 +546,7 @@ public class ControlActivity extends Fragment {
                 Log.e("token********",token);
                 Log.e("key12********",key12[position]);
                 if (isChecked){
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/"+deviceid12[position],token,key12[position],"0001",new okhttp3.Callback(){
+                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/"+deviceid12[position],token,key12[position],"0001",new okhttp3.Callback(){
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -558,7 +559,7 @@ public class ControlActivity extends Fragment {
                         }
                     });
                 } else {
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/"+deviceid12[position],token,key12[position],"0000",new okhttp3.Callback(){
+                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/"+deviceid12[position],token,key12[position],"0000",new okhttp3.Callback(){
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -596,7 +597,7 @@ public class ControlActivity extends Fragment {
                 }
                 String t = ControlActivity.this.title.get(position);
                 if ( b.equals("正转")){
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/"+deviceid12[position],token,key12[position],"0009",new okhttp3.Callback(){
+                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/"+deviceid12[position],token,key12[position],"0009",new okhttp3.Callback(){
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -614,7 +615,7 @@ public class ControlActivity extends Fragment {
                         }
                     });//6b1c7100-46ae-11e8-8280-65869ac1d365
                 } else if ( b.equals("停止")) {
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/"+deviceid12[position], token, key12[position], "0008", new okhttp3.Callback() {
+                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/"+deviceid12[position], token, key12[position], "0008", new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -633,7 +634,7 @@ public class ControlActivity extends Fragment {
                         }
                     });
                 } else if ( b.equals("反转")) {
-                    HttpUtil.sendOkHttpPost("http://140.143.23.199:8080/api/plugins/rpc/twoway/"+deviceid12[position], token, key12[position], "000B", new okhttp3.Callback() {
+                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/"+deviceid12[position], token, key12[position], "000B", new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -696,7 +697,7 @@ public class ControlActivity extends Fragment {
         @Override
         public void onMessage(WebSocket webSocket, final String text) {
             super.onMessage(webSocket, text);
-            Log.e("message", text);
+            Log.e("message|||", text);
             try {
                 final String message = "{\"tsSubCmds\":[{\"entityType\":\"DEVICE\",\"entityId\":\"" + Idss[0] + "\",\"scope\":\"LATEST_TELEMETRY\",\"cmdId\":2}]," +
                         "\"historyCmds\":[],\"attrSubCmds\":[{\"entityType\":\"DEVICE\",\"entityId\":\"" + Idss[0] + "\",\"scope\":\"CLIENT_SCOPE\",\"cmdId\":1}]}";
@@ -732,6 +733,7 @@ public class ControlActivity extends Fragment {
 //                            icard.setLocation("1");
                             statuskey.setStatuskey(button_value[i]);
                             statuskeyList.add(statuskey);
+                            button_values.set(i, (button_value[i]));
                             title.set(i, (name12[i]));
                             //type[i] + ":\n"
                             datas.set(i, ("正转当前电流 " + strings[i] + " " + "A" + "\n" + "正转最大电流 " + strings2[i] + " " + "A" + "\n"
@@ -739,11 +741,13 @@ public class ControlActivity extends Fragment {
                         }
 //                        icardList.add(icard);
 //                        statuskeyList.add(statuskey);
+
                         Message message1 = new Message();
                         message1.what = UPDATE_TEXT;
                         handler.sendMessage(message1);
 
                     }
+//                    rvAdapter.notifyDataSetChanged();
                 }
                 Timer timer = new Timer();
                 timer.schedule(new TimerTask() {
@@ -784,8 +788,9 @@ public class ControlActivity extends Fragment {
 //                    }
 //
 //                }
-                if (data.length() == 1) {
-                    for (int i = i4; i < i2; i++) {
+//                if (data.length() == 1) {
+                if (i4 == 1) {
+                    for (int i = 0; i < i2; i++) {
                         try {
                             String[] sdcur = new String[700];
                             String[] sdmax_cur = new String[700];
@@ -793,33 +798,60 @@ public class ControlActivity extends Fragment {
                             String[] sdon_max_cur = new String[700];
                             String[] sdoff_cur = new String[700];
                             String[] sdoff_max_cur = new String[700];
-
-
+                            String[] buttonkey = new String[700];
                             Log.e("||||||||||||||", "0000000000000");
                             if (i012[i] == 0) {
                                 Log.e("||||||||||||||", "0000000000001");
-                                button_value[i] = data.getString("H"+key12[i]);
-                                sdcur[i] = data.getString("H"+cur_key[i]);
-                                sdmax_cur[i] = data.getString("H"+max_cur_key[i]);
-                                String[] sd1 = sdcur[i].split(",");
-                                String[] sd2 = sdmax_cur[i].split(",");
-                                strings[i] = sd1[1];
-                                strings2[i] = sd2[1];
-//                                Log.e("DATA", sd1[1]);
+//                                button_value[i] = data.getString("H"+key12[i]);
+
+                                if (data.has("H"+cur_key[i])) {
+                                    sdcur[i] = data.getString("H" + cur_key[i]);
+                                    String[] sd1 = sdcur[i].split("\"");
+                                    strings[i] = sd1[1];
+                                    Log.e("cur_key|||", sd1[1]);
+                                }
+                                if (data.has("H"+max_cur_key[i])) {
+                                    sdmax_cur[i] = data.getString("H" + max_cur_key[i]);
+                                    String[] sd2 = sdmax_cur[i].split("\"");
+                                    strings2[i] = sd2[1];
+                                }
+                                if (data.has("H" + key12[i])) {
+                                    buttonkey[i] = data.getString("H" + key12[i]);
+                                    String[] sd3 = buttonkey[i].split("\"");
+                                    button_value[i] = sd3[1];
+                                }
+//                                String[] sd1 = sdcur[i].split(",");
+//                                String[] sd2 = sdmax_cur[i].split(",");
+//                                strings[i] = sd1[1];
+//                                strings2[i] = sd2[1];
+
 //                                Log.e("DATA", sd2[1]);       //如果是 ，首先下载什么
                             } else if (i012[i] == 1) {
-                                sdon_cur[i] = data.getString("H"+on_cur_key[i]);
-                                sdon_max_cur[i] = data.getString("H"+max_on_cur_key[i]);
-                                sdoff_cur[i] = data.getString("H"+off_cur_key[i]);
-                                sdoff_max_cur[i] = data.getString("H"+max_off_cur_key[i]);
-                                String[] sd1 = sdon_cur[i].split(",");
-                                String[] sd2 = sdon_max_cur[i].split(",");
-                                String[] sd3 = sdoff_cur[i].split(",");
-                                String[] sd4 = sdoff_max_cur[i].split(",");
-                                strings[i] = sd1[1];
-                                strings2[i] = sd2[1];
-                                strings3[i] = sd3[1];
-                                strings4[i] = sd4[1];
+                                if (data.has("H"+on_cur_key[i])) {
+                                    sdon_cur[i] = data.getString("H"+on_cur_key[i]);
+                                    String[] sd1 = sdon_cur[i].split("\"");
+                                    strings[i] = sd1[1];
+                                }
+                                if (data.has("H"+max_on_cur_key[i])) {
+                                    sdon_max_cur[i] = data.getString("H"+max_on_cur_key[i]);
+                                    String[] sd2 = sdon_max_cur[i].split("\"");
+                                    strings2[i] = sd2[1];
+                                }
+                                if (data.has("H"+off_cur_key[i])) {
+                                    sdoff_cur[i] = data.getString("H"+off_cur_key[i]);
+                                    String[] sd3 = sdoff_cur[i].split("\"");
+                                    strings3[i] = sd3[1];
+                                }
+                                if (data.has("H"+max_off_cur_key[i])) {
+                                    sdoff_cur[i] = data.getString("H"+max_off_cur_key[i]);
+                                    String[] sd4 = sdoff_max_cur[i].split("\"");
+                                    strings4[i] = sd4[1];
+                                }
+                                if (data.has("H" + key12[i])) {
+                                    buttonkey[i] = data.getString("H" + key12[i]);
+                                    String[] sd5 = buttonkey[i].split("\"");
+                                    button_value[i] = sd5[1];
+                                }
 //                                Log.e("DATA", sd1[1]);
 //                                Log.e("DATA", sd2[1]);
 //                                Log.e("DATA", sd3[1]);
@@ -832,70 +864,73 @@ public class ControlActivity extends Fragment {
                     }
                 }
                 final int l = data.length();
-                for (int i = i4; i < i2; i++) {
-                    try {
-                        String[] sdcur = new String[700];
-                        String[] sdmax_cur = new String[700];
-                        String[] sdon_cur = new String[700];
-                        String[] sdon_max_cur = new String[700];
-                        String[] sdoff_cur = new String[700];
-                        String[] sdoff_max_cur = new String[700];
-                        String[] buttonkey = new String[700];
-//                        Log.e("||||||||||||||", "11111111111");
-                        if (i012[i] == 0) {
+
+                if (i4 ==0) {
+                    i4 = 1;
+                    for (int i = 0; i < i2; i++) {
+                        try {
+                            String[] sdcur = new String[700];
+                            String[] sdmax_cur = new String[700];
+                            String[] sdon_cur = new String[700];
+                            String[] sdon_max_cur = new String[700];
+                            String[] sdoff_cur = new String[700];
+                            String[] sdoff_max_cur = new String[700];
+                            String[] buttonkey = new String[700];
+//                          Log.e("||||||||||||||", "11111111111");
+                            if (i012[i] == 0) {
 //                            Log.e("||||||||||||||", "33333");
 //                            Log.e("|||||||33333", String.valueOf(i));
 //                            Log.e("|||||||i012", String.valueOf(i012[i]));
 //                            Log.e("||||data", data.toString());
 //                            Log.e("||||cur_key[i]", cur_key[i]);
-                            buttonkey[i] = data.getString("H"+key12[i]);
-                            sdcur[i] = data.getString("H"+cur_key[i]);
-                            sdmax_cur[i] = data.getString("H"+max_cur_key[i]);
-                            String[] sd1 = sdcur[i].split("\"");
-                            String[] sd2 = sdmax_cur[i].split("\"");
-                            String[] sd3 = buttonkey[i].split("\"");
-                            strings[i] = sd1[1];
-                            strings2[i] = sd2[1];
-                            button_value[i] = sd3[1];
+                                buttonkey[i] = data.getString("H" + key12[i]);
+                                sdcur[i] = data.getString("H" + cur_key[i]);
+                                sdmax_cur[i] = data.getString("H" + max_cur_key[i]);
+                                String[] sd1 = sdcur[i].split("\"");
+                                String[] sd2 = sdmax_cur[i].split("\"");
+                                String[] sd3 = buttonkey[i].split("\"");
+                                strings[i] = sd1[1];
+                                strings2[i] = sd2[1];
+                                button_value[i] = sd3[1];
 //                            Log.e("key*********", key12[i]);
 //                            Log.e("sd3*********", sd3[1]);
 //                            Log.e("button_value********", button_value[i]);
-                        } else if (i012[i] == 1) {
-//                            Log.e("||||||||||||||", "44444");
-//                            Log.e("|||||||44444", String.valueOf(i));
-//                            Log.e("|||||||i012", String.valueOf(i012[i]));
-//                            Log.e("||on_cur_key[i]", on_cur_key[i]);
-                            buttonkey[i] = data.getString("H"+key12[i]);
-                            sdon_cur[i] = data.getString("H"+on_cur_key[i]);
-                            sdon_max_cur[i] = data.getString("H"+max_on_cur_key[i]);
-                            sdoff_cur[i] = data.getString("H"+off_cur_key[i]);
-                            sdoff_max_cur[i] = data.getString("H"+max_off_cur_key[i]);
-                            String[] sd1 = sdon_cur[i].split("\"");
-                            String[] sd2 = sdon_max_cur[i].split("\"");
-                            String[] sd3 = sdoff_cur[i].split("\"");
-                            String[] sd4 = sdoff_max_cur[i].split("\"");
-                            String[] sd5 = buttonkey[i].split("\"");
-                            strings[i] = sd1[1];
-                            strings2[i] = sd2[1];
-                            strings3[i] = sd3[1];
-                            strings4[i] = sd4[1];
-                            button_value[i] = sd5[1];
-//                            Log.e("DATA",sd1[1]);
-//                            Log.e("DATA",sd2[1]);
-//                            Log.e("DATA",sd3[1]);
-//                            Log.e("DATA",sd4[1]);
-//                            Log.e("key*********", key12[i]);
-//                            Log.e("sd5*********", sd5[1]);
-//                            Log.e("button_value********", button_value[i]);
+                            } else if (i012[i] == 1) {
+//                              Log.e("||||||||||||||", "44444");
+//                              Log.e("|||||||44444", String.valueOf(i));
+//                              Log.e("|||||||i012", String.valueOf(i012[i]));
+//                               Log.e("||on_cur_key[i]", on_cur_key[i]);
+                                buttonkey[i] = data.getString("H" + key12[i]);
+                                sdon_cur[i] = data.getString("H" + on_cur_key[i]);
+                                sdon_max_cur[i] = data.getString("H" + max_on_cur_key[i]);
+                                sdoff_cur[i] = data.getString("H" + off_cur_key[i]);
+                                sdoff_max_cur[i] = data.getString("H" + max_off_cur_key[i]);
+                                String[] sd1 = sdon_cur[i].split("\"");
+                                String[] sd2 = sdon_max_cur[i].split("\"");
+                                String[] sd3 = sdoff_cur[i].split("\"");
+                                String[] sd4 = sdoff_max_cur[i].split("\"");
+                                String[] sd5 = buttonkey[i].split("\"");
+                                strings[i] = sd1[1];
+                                strings2[i] = sd2[1];
+                                strings3[i] = sd3[1];
+                                strings4[i] = sd4[1];
+                                button_value[i] = sd5[1];
+//                                Log.e("DATA",sd1[1]);
+//                                Log.e("DATA",sd3[1]);
+//                                Log.e("DATA",sd4[1]);
+//                                Log.e("key*********", key12[i]);
+//                                Log.e("sd5*********", sd5[1]);
+//                                Log.e("button_value********", button_value[i]);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            i4++;
+//            i4++;
 
 
         }

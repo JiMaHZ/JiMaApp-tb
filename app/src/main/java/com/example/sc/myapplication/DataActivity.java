@@ -177,12 +177,10 @@ public class DataActivity extends Fragment {
                             int key10 = Integer.parseInt(key[i2], 16);
                             int i111 = (key10 - 256) / 32;
                             int i222 = ((key10 - 256) % 32) / 4;
+
                             DeviceLocation DeviceLocation =new DeviceLocation();
-
                             DeviceLocation.setLocation("#"+String.valueOf(i111+1)+"-"+String.valueOf(i222+1));
-
                             DeviceLocationList.add(DeviceLocation);
-
 
                             i5 = i111 * 8 + i222;
                             if (i5 > 511) {
@@ -424,10 +422,15 @@ public class DataActivity extends Fragment {
                         }
 
                         key12[i6] = key1[i];
-                        Log.e("key1[i]", key1[i]);
-                        Log.e("ii", "i=" + i);
-                        Log.e("key12[i]", key12[i6]);
-                        Log.e("i6", "i6="+i6);
+
+//                        DeviceLocation DeviceLocation =new DeviceLocation();
+//                        DeviceLocation.setLocation("#"+String.valueOf(i111+1)+"-"+String.valueOf(i222+1));
+//                        DeviceLocationList.add(DeviceLocation);
+
+//                        Log.e("key1[i]", key1[i]);
+//                        Log.e("ii", "i=" + i);
+//                        Log.e("key12[i]", key12[i6]);
+//                        Log.e("i6", "i6="+i6);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -480,7 +483,7 @@ public class DataActivity extends Fragment {
 //                        }
 
                         if (i7 == 1) {
-                            sd[i] = data.getString(key12[i]);
+                            sd[i] = data.getString("H"+key12[i]);
                         } else {
                             sd[i] = data.getString("H"+key1[i]);
                         }
