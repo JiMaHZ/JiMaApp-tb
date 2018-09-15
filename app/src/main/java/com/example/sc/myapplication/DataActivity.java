@@ -75,6 +75,11 @@ public class DataActivity extends Fragment {
     private String[] name12 = new String[700];
     private String[] type12 = new String[700];
     private String[] unit12 = new String[700];
+    private String[] key0 = new String[700];
+    private String[] name0 = new String[700];
+    private String[] type0 = new String[700];
+    private String[] unit0 = new String[700];
+
     private String devId = new String();
     private Handler handler = new Handler();
     JSONArray jsonArray1 = new JSONArray();
@@ -93,6 +98,7 @@ public class DataActivity extends Fragment {
     public String[] strings = new String[700];
     public String region1, region2;
     int i1 = 1, i2 = 0, i = 0, i3 = 0, i4 = 0, i5 = 0, i6 = 0, i7 = 0, i8 = 0;
+    int arrayreal=0;
 
 
 
@@ -178,24 +184,24 @@ public class DataActivity extends Fragment {
                             int i111 = (key10 - 256) / 32;
                             int i222 = ((key10 - 256) % 32) / 4;
 
-                            DeviceLocation DeviceLocation =new DeviceLocation();
-                            DeviceLocation.setLocation("#"+String.valueOf(i111+1)+"-"+String.valueOf(i222+1));
-                            DeviceLocationList.add(DeviceLocation);
+
 
                             i5 = i111 * 8 + i222;
                             if (i5 > 511) {
                                 i5 = i5 - 256;
                             }
+
+                            key12[i5] = key[i2];
                             name12[i5] = name[i2];
                             type12[i5] = type[i2];
                             unit12[i5] = unit[i2];
-//                            if (key[i2].equals("0100")) {
-//                                i7 = 1;
-//                            }
+                            if (key[i2].equals("0100")) {
+                                i7 = 1;
+                            }
                             JSONObject jsonObject = new JSONObject();
 
                             try {
-                                jsonObject.put(devId[7], key[i2]);
+                                jsonObject.put(devId[7], key12[i5]);
                             } catch (JSONException e1) {
                                 e1.printStackTrace();
                             }
@@ -206,6 +212,24 @@ public class DataActivity extends Fragment {
                             i2++;
                         }
                     }
+                    for (int i = 0; i<700; i++){
+                        if (key12[i] != null){
+                            name0[arrayreal] = name12[i];
+                            type0[arrayreal] = type12[i];
+                            unit0[arrayreal] = unit12[i];
+                            key0[arrayreal] = key12[i];
+
+                            int key10 = Integer.parseInt(key0[arrayreal], 16);
+                            int i111 = (key10 - 256) / 32;
+                            int i222 = ((key10 - 256) % 32) / 4;
+                            DeviceLocation DeviceLocation =new DeviceLocation();
+                            DeviceLocation.setLocation("#"+String.valueOf(i111+1)+"-"+String.valueOf(i222+1));
+                            DeviceLocationList.add(DeviceLocation);
+                            Log.e("key0|||",key0[arrayreal]);
+                            arrayreal++;
+                        }
+                    }
+
 
                     i8 = 1;
                 }
@@ -373,9 +397,9 @@ public class DataActivity extends Fragment {
                         //Log.e("Data", name[i] + " " + type[i] + " " + strings[i] + " " + unit[i]);
                         if (1 == 1) {
                             if (i7 == 1) {
-                                title.set(i, (name12[i] + ""));
+                                title.set(i, (name0[i] + ""));
                                 //type[i] + ":\n"
-                                datas.set(i, (strings[i] + " " + unit12[i]));
+                                datas.set(i, (strings[i] + " " + unit0[i]));
                                 times.set(i, (time[i]));
                             } else {
                                 title.set(i, (name[i] + ""));
@@ -411,17 +435,17 @@ public class DataActivity extends Fragment {
                     JSONObject jsonObject = jsonArray1.getJSONObject(i);
                     Log.e("jsonob", String.valueOf(jsonObject));
                     Log.e("jsonob", devId);
-                    try {
-                        key1[i] = jsonObject.getString(devId);
-                        int key10 = Integer.parseInt(key1[i], 16);
-                        int i111 = (key10 - 256) / 32;
-                        int i222 = ((key10 - 256) % 32) / 4;
-                        i6 = i111 * 8 + i222;
-                        if (i6 > 511) {
-                            i6 = i6 - 256;
-                        }
-
-                        key12[i6] = key1[i];
+//                    try {
+//                        key1[i] = jsonObject.getString(devId);
+//                        int key10 = Integer.parseInt(key1[i], 16);
+//                        int i111 = (key10 - 256) / 32;
+//                        int i222 = ((key10 - 256) % 32) / 4;
+//                        i6 = i111 * 8 + i222;
+//                        if (i6 > 511) {
+//                            i6 = i6 - 256;
+//                        }
+//
+//                        key12[i6] = key1[i];
 
 //                        DeviceLocation DeviceLocation =new DeviceLocation();
 //                        DeviceLocation.setLocation("#"+String.valueOf(i111+1)+"-"+String.valueOf(i222+1));
@@ -431,36 +455,38 @@ public class DataActivity extends Fragment {
 //                        Log.e("ii", "i=" + i);
 //                        Log.e("key12[i]", key12[i6]);
 //                        Log.e("i6", "i6="+i6);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
 
                 }
-                if (data.length() == 1) {
-                    for (int i = i4; i < 700; i++) {
+                if (i4 == 1) {
+                    for (int i = 0; i < i2; i++) {
                         try {
-                            String[] sd = new String[10];
-                            Log.e("H+key12[i]", "H"+key12[i]);
-                            if (i7 == 1) {
-                                sd[i] = data.getString("H"+key12[i]);
-                            } else {
-                                sd[i] = data.getString("H"+key1[i]);
+                            String[] sd = new String[700];
+                            Log.e("H+key12[i]", "H"+key0[i]);
+                            if ((i7 == 1)&&(data.has("H"+key0[i]))) {
+                                sd[i] = data.getString("H"+key0[i]);
+                            } else if(data.has("H"+key[i])){
+                                sd[i] = data.getString("H"+key[i]);
                             }
-                            String[] t1 = sd[i].split(",");
-                            ts[i] = t1[0].substring(2);
-                            Long t = Long.valueOf(ts[i]);
-                            Timestamp timestamp = new Timestamp(t);
-                            String tsStr = "";
-                            @SuppressLint("SimpleDateFormat") DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                            try {
-                                tsStr = sdf.format(timestamp);
-                                time[i] = tsStr;
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            if (sd[i] != null) {
+                                String[] t1 = sd[i].split(",");
+                                ts[i] = t1[0].substring(2);
+                                Long t = Long.valueOf(ts[i]);
+                                Timestamp timestamp = new Timestamp(t);
+                                String tsStr = "";
+                                @SuppressLint("SimpleDateFormat") DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                                try {
+                                    tsStr = sdf.format(timestamp);
+                                    time[i] = tsStr;
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                String[] sd1 = sd[i].split("\"");
+                                strings[i] = sd1[1];
+                                Log.e("DATA", sd1[1]);
                             }
-                            String[] sd1 = sd[i].split("\"");
-                            strings[i] = sd1[1];
-                            Log.e("DATA", sd1[1]);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -468,49 +494,55 @@ public class DataActivity extends Fragment {
                     }
                 }
                 final int l = data.length();
-                for (int i = i4; i < 700; i++) {
-                    try {
-                        String[] sd = new String[700];
-                        String[] Hkey = new String[700];
-//                        Log.e("H+i", String.valueOf(i));
-//                        Log.e("H+key12[i]", "H"+key12[i]);
-//                        String Hkey =new String();
-//                        if (key12[i].isEmpty() ) {
-//                            Hkey[i] = "H" + key12[i];
-////                            Log.e("Hkey", Hkey);
-//                        } else {
-//                            Hkey[i] = null;
-//                        }
-
-                        if (i7 == 1) {
-                            sd[i] = data.getString("H"+key12[i]);
-                        } else {
-                            sd[i] = data.getString("H"+key1[i]);
-                        }
-//                        Log.e("||||sd[i]", "H"+sd[i]);
-                        String[] t1 = sd[i].split(",");
-                        ts[i] = t1[0].substring(2);
-                        Long t = Long.valueOf(ts[i]);
-                        Timestamp timestamp = new Timestamp(t);
-                        String tsStr = "";
-                        @SuppressLint("SimpleDateFormat") DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                if (i4 == 0 ){
+                    i4=1;
+                    for (int i = 0; i < i2; i++) {
                         try {
-                            tsStr = sdf.format(timestamp);
-                            time[i] = tsStr;
+                            String[] sd = new String[700];
+                            String[] Hkey = new String[700];
+    //                        Log.e("H+i", String.valueOf(i));
+    //                        Log.e("H+key12[i]", "H"+key12[i]);
+    //                        String Hkey =new String();
+    //                        if (key12[i].isEmpty() ) {
+    //                            Hkey[i] = "H" + key12[i];
+    ////                            Log.e("Hkey", Hkey);
+    //                        } else {
+    //                            Hkey[i] = null;
+    //                        }
+
+                            if ((i7 == 1)&&(data.has("H"+key0[i]))) {
+                                sd[i] = data.getString("H"+key0[i]);
+                            } else if(data.has("H"+key[i])){
+                                sd[i] = data.getString("H"+key[i]);
+                            }
+    //                        Log.e("||||sd[i]", "H"+sd[i]);
+                            if (sd[i] != null) {
+                                String[] t1 = sd[i].split(",");
+                                ts[i] = t1[0].substring(2);
+                                Long t = Long.valueOf(ts[i]);
+                                Timestamp timestamp = new Timestamp(t);
+                                String tsStr = "";
+                                @SuppressLint("SimpleDateFormat") DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                                try {
+                                    tsStr = sdf.format(timestamp);
+                                    time[i] = tsStr;
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                String[] sd1 = sd[i].split("\"");
+                                strings[i] = sd1[1];
+                                Log.e("DATA", sd1[1]);
+
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        String[] sd1 = sd[i].split("\"");
-                        strings[i] = sd1[1];
-                        Log.e("DATA", sd1[1]);
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            i4++;
+//            i4++;
         }
 
         @Override
