@@ -1,6 +1,7 @@
 package com.example.sc.myapplication;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,11 +16,16 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sc.parse.App;
+import com.example.sc.parse.CheckBoxList;
 import com.example.sc.parse.Device;
 import com.example.sc.parse.DeviceLocation;
 import com.example.sc.parse.IniStatus;
@@ -52,10 +58,13 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 
+
 import static android.content.Context.MODE_PRIVATE;
 
 
 public class ControlActivity extends Fragment {
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Rv3Cardview rvAdapter;
     private List<String> datas = new ArrayList<>();
@@ -63,7 +72,7 @@ public class ControlActivity extends Fragment {
     private List<String> times = new ArrayList<>();
     private List<String> control_addrtw = new ArrayList<>();
     private List<String> control_addrte = new ArrayList<>();
-//    public List<String> check_values = new ArrayList<>();
+    //    public List<String> check_values = new ArrayList<>();
     public List<String> button_values = new ArrayList<>();
     private List<DeviceLocation> DeviceLocationList = new ArrayList<>();
 
@@ -128,12 +137,14 @@ public class ControlActivity extends Fragment {
     public String[] max_off_cur_key = new String[700];
 
     public String[] button_value = new String[700];
+    public String sortType = "全部";
+//    public boolean[] batch_selectedList = new boolean[700];
+    private List<CheckBoxList> mList = new ArrayList<>();
+    private int index = 0;
 
-
-
-    private Button btn1=null;
-    private Button btn2=null;
-    private Button btn3=null;
+    private Button btn1 = null;
+    private Button btn2 = null;
+    private Button btn3 = null;
 
     public boolean b1 = true;
     public boolean b2 = true;
@@ -143,6 +154,10 @@ public class ControlActivity extends Fragment {
     public String region1, region2;
     int i1 = 1, i = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 0, i6 = 0, i7 = 0, i8 = 0;
     int iI = 0;
+
+
+//    @InjectView(R.id.checkbox_2)
+//    LinearLayout checkboxlist;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -387,14 +402,11 @@ public class ControlActivity extends Fragment {
                             icard.setLocation("1");
                         }
                         icardList.add(icard);
-                        int key10= Integer.parseInt(key12[i],16);
-//
-                        int i111=(key10-8448)/16;
-                        int i222=((key10-8448)%16)/4;
-                        DeviceLocation DeviceLocation =new DeviceLocation();
-
-                        DeviceLocation.setLocation("#"+String.valueOf(i111+1)+"-"+String.valueOf(i222+1));
-
+                        int key10 = Integer.parseInt(key12[i], 16);
+                        int i111 = (key10 - 8448) / 16;
+                        int i222 = ((key10 - 8448) % 16) / 4;
+                        DeviceLocation DeviceLocation = new DeviceLocation();
+                        DeviceLocation.setLocation("#" + String.valueOf(i111 + 1) + "-" + String.valueOf(i222 + 1));
                         DeviceLocationList.add(DeviceLocation);
 
 //                        Log.e("icardList", String.valueOf(icardList));
@@ -461,14 +473,8 @@ public class ControlActivity extends Fragment {
             mOkHttpClient.dispatcher().executorService().shutdown();
         }
 
-    }
 
-//    public void exchange(String a,String b){
-//        String temp;
-//        temp = a;
-//        a = b;
-//        b = temp;
-//    }
+    }
 
 
     @SuppressLint("HandlerLeak")
@@ -478,6 +484,7 @@ public class ControlActivity extends Fragment {
         View view = inflater.inflate(R.layout.activity_control, container,
                 false);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        Spinner spinner1 = (Spinner) view.findViewById(R.id.spinner1);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.mRecyclerView);
         swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources()
@@ -504,8 +511,10 @@ public class ControlActivity extends Fragment {
         for (int i = 0; i < i2; i++) {
             title.add(" " + i);
             datas.add(" " + i);
-            button_values.add(" " +i);
+            button_values.add(" " + i);
             //times.add(" " + i);
+
+
         }
         handler = new Handler() {
             @SuppressLint("SetTextI18n")
@@ -521,18 +530,250 @@ public class ControlActivity extends Fragment {
                 }
             }
         };
-        rvAdapter = new Rv3Cardview(icardList, datas, title,button_values, tw, te, statuskeyList,DeviceLocationList);
+
+        final Button button0 = (Button) view.findViewById(R.id.batch_0);
+        final Button button1 = (Button) view.findViewById(R.id.batch_1);   //需要设置一个final来实现
+        final Button button2 = (Button) view.findViewById(R.id.batch_2);
+        final Button button3 = (Button) view.findViewById(R.id.batch_3);
+        final Button button4 = (Button) view.findViewById(R.id.batch_4);
+
+////        final CheckBox cb = (CheckBox) view.findViewById(R.id.choose);
+//        preferences = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
+//        editor = preferences.edit();
+////        Boolean check = preferences.getBoolean("flag",false);
+//        for (i = 0; i < i2; i++) {
+//            Boolean check = preferences.getBoolean(String.valueOf(i), false);
+//            IniStatus statuskey = new IniStatus();
+//            statuskey.setStatuskey(String.valueOf(check));
+//            statuskeyList.add(statuskey);
+//       }
+
+        spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int pos, long id) {
+
+                String[] sort_types = getResources().getStringArray(R.array.sort_types);
+                sortType = sort_types[pos];
+                rvAdapter.setSort_types(sortType);
+                if (rvAdapter.isShowOrNot()) {
+                    if (sortType.equals("全部") || sortType.equals("风机")) {
+                        button3.setVisibility(View.GONE);
+                        button0.setText("取消批量");
+                        button1.setText("全选");
+                        button2.setText("批量开");
+                        button4.setText("批量关");
+//                        rvAdapter.setCheckedAll("none");
+                    } else if (sortType.equals("卷膜")) {
+                        button3.setVisibility(View.VISIBLE);
+                        button0.setText("取消批量");
+                        button1.setText("全选");
+                        button2.setText("批量正转");
+                        button3.setText("批量反转");
+                        button4.setText("批量关");
+//                        rvAdapter.setCheckedAll("none");
+                    }
+                }
+
+                Log.e("已选择", sortType);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Another interface callback
+            }
+
+        });
+
+        //批量控制和取消批量控制按钮的设置
+        button0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (sortType.equals("全部") || sortType.equals("风机")) {
+                    if (!rvAdapter.isShowOrNot()) {
+                        button1.setVisibility(View.VISIBLE);
+                        button2.setVisibility(View.VISIBLE);
+                        button4.setVisibility(View.VISIBLE);
+                        button3.setVisibility(View.GONE);// 设置显示
+                        rvAdapter.setShowOrNot(true);
+                        button0.setText("取消批量");
+                        button1.setText("全选");
+                        button2.setText("批量开");
+                        button4.setText("批量关");
+                    } else {
+                        button1.setVisibility(View.GONE);
+                        button2.setVisibility(View.GONE);
+                        button3.setVisibility(View.GONE);
+                        button4.setVisibility(View.GONE);// 设置隐藏
+                        rvAdapter.setShowOrNot(false);
+                        button0.setText("批量控制");
+//                        rvAdapter.setCheckedAll("none");
+                        for (i = 0; i < i2; i++) {
+//                            batch_selectedList[i] = false;
+                            rvAdapter.getCheckBoxList().get(i).setSelect(false);
+                        }
+                    }
+                } else if (sortType.equals("卷膜")) {
+                    if (!rvAdapter.isShowOrNot()) {
+                        button1.setVisibility(View.VISIBLE);
+                        button2.setVisibility(View.VISIBLE);
+                        button3.setVisibility(View.VISIBLE);
+                        button4.setVisibility(View.VISIBLE);// 设置显示
+                        rvAdapter.setShowOrNot(true);
+                        button0.setText("取消批量");
+                        button1.setText("全选");
+                        button2.setText("批量正转");
+                        button3.setText("批量反转");
+                        button4.setText("批量关");
+                    } else {
+                        button1.setVisibility(View.GONE);
+                        button2.setVisibility(View.GONE);
+                        button3.setVisibility(View.GONE);
+                        button4.setVisibility(View.GONE);// 设置隐藏
+                        rvAdapter.setShowOrNot(false);
+                        button0.setText("批量控制");
+//                        rvAdapter.setCheckedAll("none");
+                        for (i = 0; i < i2; i++) {
+//                            batch_selectedList[i] = false;
+                            rvAdapter.getCheckBoxList().get(i).setSelect(false);
+                        }
+                    }
+
+                }
+//                if (isShowOrNot){
+//                    checkboxlist.setVisibility(View.VISIBLE);
+//
+//                }else {
+//                    checkboxlist.setVisibility(View.GONE);
+//                }
+
+            }
+        });
+
+        //全选和取消功能
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (button1.getText().equals("全选")) {
+                    if (sortType.equals("风机")){
+                        index=tw;
+                        for (i = 0; i < tw; i++) {
+                            rvAdapter.getCheckBoxList().get(i).setSelect(true);
+                        }
+                    }else if (sortType.equals("卷膜")){
+                        index=te;
+                        for (i = tw; i < tw+te; i++) {
+                            rvAdapter.getCheckBoxList().get(i).setSelect(true);
+                        }
+                    }else if (sortType.equals("全部")){
+                        index=te+tw;
+                        for (i = 0; i < tw+te; i++) {
+                            rvAdapter.getCheckBoxList().get(i).setSelect(true);
+                        }
+                    }
+                    button1.setText("取消");
+                    rvAdapter.notifyDataSetChanged();
+
+                } else if (button1.getText().equals("取消")) {
+                    if (sortType.equals("风机")){
+                        index=tw;
+                        for (i = 0; i < tw; i++) {
+                            rvAdapter.getCheckBoxList().get(i).setSelect(false);
+                        }
+                    }else if (sortType.equals("卷膜")){
+                        index=te;
+                        for (i = tw; i < tw+te; i++) {
+                            rvAdapter.getCheckBoxList().get(i).setSelect(false);
+                        }
+                    }else if (sortType.equals("全部")){
+                        index=te+tw;
+                        for (i = 0; i < tw+te; i++) {
+                            rvAdapter.getCheckBoxList().get(i).setSelect(false);
+                        }
+                    }
+                    button1.setText("全选");
+                    index=0;
+                    rvAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+
+        //批量正转
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (sortType.equals("风机") || sortType.equals("全部")) {
+                    batchControl(0, tw, "0005", "批量开");
+                }
+                if (sortType.equals("卷膜") || sortType.equals("全部")) {
+                    batchControl(tw, tw + te, "0003", "批量正转");
+                }
+            }
+        });
+
+        //批量反转
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                batchControl(tw, tw + te, "0002", "批量反转");
+            }
+        });
+
+        //批量关
+        button4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (sortType.equals("风机") || sortType.equals("全部")) {
+                    batchControl(0, tw, "0004", "批量关");
+                }
+                if (sortType.equals("卷膜") || sortType.equals("全部")) {
+                    batchControl(tw, tw + te, "0008", "批量关");
+                }
+            }
+        });
+
+
+        rvAdapter = new Rv3Cardview(icardList, datas, title, button_values, tw, te, sortType, statuskeyList, DeviceLocationList);
         recyclerView.setLayoutManager(new LinearLayoutManager(ControlActivity.this.getActivity()));
         recyclerView.setAdapter(rvAdapter);
+
+        //初始化CheckBoxList数组
+        if (rvAdapter != null) {
+            for(i=0;i<i2;i++){
+                CheckBoxList checkBoxList = new CheckBoxList();
+                checkBoxList.setSelect(false);
+                mList.add(checkBoxList);
+                rvAdapter.notifyAdapter(mList, false);
+            }
+        }
+
         rvAdapter.setItemClickListener(new Rv3Cardview.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
 //                Toast.makeText(view.getContext(),"正转",Toast.LENGTH_SHORT).show();
             }
 
-
             @Override
             public void onTextClick(View view, int position) {
+            }
+        });
+
+        rvAdapter.setOnCheckBoxClickListener(new Rv3Cardview.OnCheckBoxClickListener() {
+            @Override
+            public void onClick(Item item, int position, boolean isChecked) {
+                if (isChecked) {
+                    index++;
+                    if((sortType.equals("风机")&&index ==tw)||(sortType.equals("卷膜")&&index ==te)||(sortType.equals("全部")&&index ==tw+te)){
+                        button1.setText("取消");
+                    }
+                } else {
+                    index--;
+                    button1.setText("全选");
+                }
+                String t = ControlActivity.this.title.get(position);
+                Log.e("checkBox", t + " " + String.valueOf(isChecked)+position);
+
             }
         });
 
@@ -543,31 +784,33 @@ public class ControlActivity extends Fragment {
                 String t = ControlActivity.this.title.get(position);
                 String b = isChecked ? "打开" : "关闭";
 //                Log.e("Idss********",Id[position]);
-                Log.e("token********",token);
-                Log.e("key12********",key12[position]);
-                if (isChecked){
-                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/"+deviceid12[position],token,key12[position],"0001",new okhttp3.Callback(){
+                Log.e("token********", token);
+                Log.e("key12********", key12[position]);
+                if (isChecked) {
+                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/" + deviceid12[position], token, key12[position], "0001", new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
+
                         @Override
-                        public void onResponse(Call call, Response response) throws IOException{
+                        public void onResponse(Call call, Response response) throws IOException {
                             String responseData = response.body().string();
-                            if ((responseData != null)&&(responseData !="Device with requested id wasn't found!")){
-                                Log.e("Respond*********",  "已打开");
+                            if ((responseData != null) && (responseData != "Device with requested id wasn't found!")) {
+                                Log.e("Respond*********", "已打开");
                             }
                         }
                     });
                 } else {
-                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/"+deviceid12[position],token,key12[position],"0000",new okhttp3.Callback(){
+                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/" + deviceid12[position], token, key12[position], "0000", new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
+
                         @Override
-                        public void onResponse(Call call, Response response) throws IOException{
+                        public void onResponse(Call call, Response response) throws IOException {
                             String responseData = response.body().string();
-                            if ((responseData != null)&&(responseData !="Device with requested id wasn't found!")){
-                                Log.e("Respond*********",  "已关闭");
+                            if ((responseData != null) && (responseData != "Device with requested id wasn't found!")) {
+                                Log.e("Respond*********", "已关闭");
                             }
                         }
                     });
@@ -596,26 +839,8 @@ public class ControlActivity extends Fragment {
                     Log.e("***************", String.valueOf(((Button) view).getId()));   //正转2131230760   反转2131230759    关2131230757
                 }
                 String t = ControlActivity.this.title.get(position);
-                if ( b.equals("正转")){
-                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/"+deviceid12[position],token,key12[position],"0009",new okhttp3.Callback(){
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                        }
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException{
-                            String responseData = response.body().string();
-                            Log.e("responseData*******",responseData);
-                            if ((responseData != null)&&(responseData !="Device with requested id wasn't found!")){
-                                Log.e("Respond*********",  "已正转");
-//                                Toast.makeText(getActivity(), "已正转", Toast.LENGTH_SHORT).show();
-//                                    b1 = false;
-//                                    b2 = true;
-//                                    b3 = true;
-                            }
-                        }
-                    });//6b1c7100-46ae-11e8-8280-65869ac1d365
-                } else if ( b.equals("停止")) {
-                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/"+deviceid12[position], token, key12[position], "0008", new okhttp3.Callback() {
+                if (b.equals("正转")) {
+                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/" + deviceid12[position], token, key12[position], "0009", new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -623,7 +848,26 @@ public class ControlActivity extends Fragment {
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             String responseData = response.body().string();
-                            Log.e("responseData*******",responseData);
+                            Log.e("responseData*******", responseData);
+                            if ((responseData != null) && (responseData != "Device with requested id wasn't found!")) {
+                                Log.e("Respond*********", "已正转");
+//                                Toast.makeText(getActivity(), "已正转", Toast.LENGTH_SHORT).show();
+//                                    b1 = false;
+//                                    b2 = true;
+//                                    b3 = true;
+                            }
+                        }
+                    });//6b1c7100-46ae-11e8-8280-65869ac1d365
+                } else if (b.equals("停止")) {
+                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/" + deviceid12[position], token, key12[position], "0008", new okhttp3.Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            String responseData = response.body().string();
+                            Log.e("responseData*******", responseData);
                             if ((responseData != null) && (responseData != "Device with requested id wasn't found!")) {
                                 Log.e("Respond*********", "已停止");
 //                                Toast.makeText(getActivity(), "已停止", Toast.LENGTH_SHORT).show();
@@ -633,8 +877,8 @@ public class ControlActivity extends Fragment {
                             }
                         }
                     });
-                } else if ( b.equals("反转")) {
-                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/"+deviceid12[position], token, key12[position], "000B", new okhttp3.Callback() {
+                } else if (b.equals("反转")) {
+                    HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/" + deviceid12[position], token, key12[position], "000B", new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
@@ -642,7 +886,7 @@ public class ControlActivity extends Fragment {
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             String responseData = response.body().string();
-                            Log.e("responseData*******",responseData);
+                            Log.e("responseData*******", responseData);
                             if ((responseData != null) && (responseData != "Device with requested id wasn't found!")) {
                                 Log.e("Respond*********", "已反转");
 //                                Toast.makeText(getActivity(), "已反转", Toast.LENGTH_SHORT).show();
@@ -727,7 +971,7 @@ public class ControlActivity extends Fragment {
 //                            icard.setLocation("0");
                             title.set(i, (name12[i]));
                             //type[i] + ":\n"
-                            datas.set(i, ("当前电流 " + strings[i] + " " + "A"  + "\n"+ "最大电流 " + strings2[i] + " " + "A"));
+                            datas.set(i, ("当前电流 " + strings[i] + " " + "A" + "\n" + "最大电流 " + strings2[i] + " " + "A"));
 //                                times.set(i,(time[i]));
                         } else if (i012[i] == 1) {
 //                            icard.setLocation("1");
@@ -804,13 +1048,13 @@ public class ControlActivity extends Fragment {
                                 Log.e("||||||||||||||", "0000000000001");
 //                                button_value[i] = data.getString("H"+key12[i]);
 
-                                if (data.has("H"+cur_key[i])) {
+                                if (data.has("H" + cur_key[i])) {
                                     sdcur[i] = data.getString("H" + cur_key[i]);
                                     String[] sd1 = sdcur[i].split("\"");
                                     strings[i] = sd1[1];
                                     Log.e("cur_key|||", sd1[1]);
                                 }
-                                if (data.has("H"+max_cur_key[i])) {
+                                if (data.has("H" + max_cur_key[i])) {
                                     sdmax_cur[i] = data.getString("H" + max_cur_key[i]);
                                     String[] sd2 = sdmax_cur[i].split("\"");
                                     strings2[i] = sd2[1];
@@ -827,23 +1071,24 @@ public class ControlActivity extends Fragment {
 
 //                                Log.e("DATA", sd2[1]);       //如果是 ，首先下载什么
                             } else if (i012[i] == 1) {
-                                if (data.has("H"+on_cur_key[i])) {
-                                    sdon_cur[i] = data.getString("H"+on_cur_key[i]);
+                                Log.e("||||||||||||||", "0000000000002");
+                                if (data.has("H" + on_cur_key[i])) {
+                                    sdon_cur[i] = data.getString("H" + on_cur_key[i]);
                                     String[] sd1 = sdon_cur[i].split("\"");
                                     strings[i] = sd1[1];
                                 }
-                                if (data.has("H"+max_on_cur_key[i])) {
-                                    sdon_max_cur[i] = data.getString("H"+max_on_cur_key[i]);
+                                if (data.has("H" + max_on_cur_key[i])) {
+                                    sdon_max_cur[i] = data.getString("H" + max_on_cur_key[i]);
                                     String[] sd2 = sdon_max_cur[i].split("\"");
                                     strings2[i] = sd2[1];
                                 }
-                                if (data.has("H"+off_cur_key[i])) {
-                                    sdoff_cur[i] = data.getString("H"+off_cur_key[i]);
+                                if (data.has("H" + off_cur_key[i])) {
+                                    sdoff_cur[i] = data.getString("H" + off_cur_key[i]);
                                     String[] sd3 = sdoff_cur[i].split("\"");
                                     strings3[i] = sd3[1];
                                 }
-                                if (data.has("H"+max_off_cur_key[i])) {
-                                    sdoff_cur[i] = data.getString("H"+max_off_cur_key[i]);
+                                if (data.has("H" + max_off_cur_key[i])) {
+                                    sdoff_max_cur[i] = data.getString("H" + max_off_cur_key[i]);
                                     String[] sd4 = sdoff_max_cur[i].split("\"");
                                     strings4[i] = sd4[1];
                                 }
@@ -865,7 +1110,7 @@ public class ControlActivity extends Fragment {
                 }
                 final int l = data.length();
 
-                if (i4 ==0) {
+                if (i4 == 0) {
                     i4 = 1;
                     for (int i = 0; i < i2; i++) {
                         try {
@@ -964,6 +1209,30 @@ public class ControlActivity extends Fragment {
         });
     }
 
+    //批量控制
+    private void batchControl(int start_add, int end_add, String param_control, final String tag) {
+
+        for (i = start_add; i < end_add; i++) {
+            if (rvAdapter.getCheckBoxList().get(i).isSelect) {
+                Log.e("post*********", "发送第" + i + "个信息");
+                HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/" + deviceid12[i], token, key12[i], param_control, new okhttp3.Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String responseData = response.body().string();
+                        Log.e("responseData*******", responseData);
+                        if ((responseData != null) && (!responseData.equals("Device with requested id wasn't found!"))) {
+                            Log.e("Respond*********", tag + i);
+                        }
+                    }
+                });
+            }
+        }
+
+    }
 
 }
 
