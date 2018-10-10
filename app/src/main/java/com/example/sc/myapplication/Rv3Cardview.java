@@ -54,6 +54,7 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Type> bt3List = new ArrayList<>();
     private List<CheckBoxList> mCheckBoxList;
     private boolean isShowOrNot;
+    private boolean isLightOn;
 
     public enum ITEM_TYPE {
         ITEM1,
@@ -156,13 +157,16 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             //指示灯的状态
             if ((button_values.size() != 0) && ((button_values.get(position).equals("0001")) || (button_values.get(position).equals("0005")))) {
-                ((Item1ViewHolder) holder).lamp1.setImageResource(R.drawable.lamp_green);
-//                typeList.set(position, Type.Checked);
+                ((Item1ViewHolder) holder).lamp1_1.setImageResource(R.drawable.lamp_green);
+                ((Item1ViewHolder) holder).lamp1_2.setImageResource(R.drawable.lamp_gray_light);
+                typeList.set(position, Type.Checked);
             } else if ((button_values.size() != 0) && ((button_values.get(position).equals("0000")) || (button_values.get(position).equals("0004")))) {
-                ((Item1ViewHolder) holder).lamp1.setImageResource(R.drawable.lamp_gray);
-//                typeList.set(position, Type.UnCheck);
+                ((Item1ViewHolder) holder).lamp1_1.setImageResource(R.drawable.lamp_gray_light);
+                ((Item1ViewHolder) holder).lamp1_2.setImageResource(R.drawable.lamp_gray);
+                typeList.set(position, Type.UnCheck);
             } else {
-                ((Item1ViewHolder) holder).lamp1.setImageResource(R.drawable.lamp_gray);
+                ((Item1ViewHolder) holder).lamp1_1.setImageResource(R.drawable.lamp_gray_light);
+                ((Item1ViewHolder) holder).lamp1_2.setImageResource(R.drawable.lamp_gray_light);
             }
 
             ((Item1ViewHolder) holder).mTextView1.setText(title.get(position));
@@ -255,23 +259,31 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((Item2ViewHolder) holder).mTextView2.setText(datas.get(position));
             ((Item2ViewHolder) holder).mTextView3.setText(DeviceLocationList.get(position).getLocation());
             if ((button_values.size() != 0) && ((button_values.get(position).equals("0009")) || (button_values.get(position).equals("0003")))) {
-                ((Item2ViewHolder) holder).lamp2.setImageResource(R.drawable.lamp_green);
+                ((Item2ViewHolder) holder).lamp2_1.setImageResource(R.drawable.lamp_green);
+                ((Item2ViewHolder) holder).lamp2_2.setImageResource(R.drawable.lamp_gray_light);
+                ((Item2ViewHolder) holder).lamp2_3.setImageResource(R.drawable.lamp_gray_light);
                 bt1List.set(position, Type.Checked);
                 bt2List.set(position, Type.UnCheck);
                 bt3List.set(position, Type.UnCheck);
             } else if ((button_values.size() != 0) && ((button_values.get(position).equals("0008")) || (button_values.get(position).equals("0000")))) {
-                ((Item2ViewHolder) holder).lamp2.setImageResource(R.drawable.lamp_gray);
+                ((Item2ViewHolder) holder).lamp2_1.setImageResource(R.drawable.lamp_gray_light);
+                ((Item2ViewHolder) holder).lamp2_2.setImageResource(R.drawable.lamp_gray);
+                ((Item2ViewHolder) holder).lamp2_3.setImageResource(R.drawable.lamp_gray_light);
                 bt1List.set(position, Type.UnCheck);
                 bt2List.set(position, Type.Checked);
                 bt3List.set(position, Type.UnCheck);
-            } else if ((button_values.size() != 0) && ((button_values.get(position).equals("000B")) || (button_values.get(position).equals("0004")))) {
-                ((Item2ViewHolder) holder).lamp2.setImageResource(R.drawable.lamp_blue);
+            } else if ((button_values.size() != 0) && ((button_values.get(position).equals("000B")) || (button_values.get(position).equals("0002")))) {
+                ((Item2ViewHolder) holder).lamp2_1.setImageResource(R.drawable.lamp_gray_light);
+                ((Item2ViewHolder) holder).lamp2_2.setImageResource(R.drawable.lamp_gray_light);
+                ((Item2ViewHolder) holder).lamp2_3.setImageResource(R.drawable.lamp_blue);
                 bt1List.set(position, Type.UnCheck);
                 bt2List.set(position, Type.UnCheck);
                 bt3List.set(position, Type.Checked);
 
             } else {
-                ((Item2ViewHolder) holder).lamp2.setImageResource(R.drawable.lamp_gray);
+                ((Item2ViewHolder) holder).lamp2_1.setImageResource(R.drawable.lamp_gray_light);
+                ((Item2ViewHolder) holder).lamp2_2.setImageResource(R.drawable.lamp_gray_light);
+                ((Item2ViewHolder) holder).lamp2_3.setImageResource(R.drawable.lamp_gray_light);
             }
 
             if ((statuskeyList.size() != 0) && ((statuskeyList.get(position).getStatuskey().equals("0008")) || (statuskeyList.get(position).getStatuskey().equals("0000")))) {
@@ -284,7 +296,7 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 bt2List.set(position, Type.UnCheck);
                 bt3List.set(position, Type.UnCheck);
                 statuskeyList.get(position).setStatuskey("INI");
-            } else if ((statuskeyList.size() != 0) && ((statuskeyList.get(position).getStatuskey().equals("000B")) || (statuskeyList.get(position).getStatuskey().equals("0004")))) {
+            } else if ((statuskeyList.size() != 0) && ((statuskeyList.get(position).getStatuskey().equals("000B")) || (statuskeyList.get(position).getStatuskey().equals("0002")))) {
                 bt1List.set(position, Type.UnCheck);
                 bt2List.set(position, Type.UnCheck);
                 bt3List.set(position, Type.Checked);
@@ -443,7 +455,8 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView mTextView2;
         TextView mTextView3;
         Switch aSwitch;
-        public ImageView lamp1;
+        ImageView lamp1_1;
+        ImageView lamp1_2;
         CheckBox choose;
 
         public Item1ViewHolder(View itemView) {
@@ -452,7 +465,8 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             mTextView2 = (TextView) itemView.findViewById(R.id.tv_data1);
             mTextView3 = (TextView) itemView.findViewById(R.id.devices_location);
             aSwitch = (Switch) itemView.findViewById(R.id.switch1);
-            lamp1 = (ImageView) itemView.findViewById(R.id.lamp);
+            lamp1_1 = (ImageView) itemView.findViewById(R.id.lamp1);
+            lamp1_2 = (ImageView) itemView.findViewById(R.id.lamp2);
             choose = itemView.findViewById(R.id.choose);
 
         }
@@ -479,7 +493,9 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView mTextView2;
         TextView mTextView3;
         Button button1, button2, button3;
-        public ImageView lamp2;
+        ImageView lamp2_1;
+        ImageView lamp2_2;
+        ImageView lamp2_3;
         CheckBox choose;
 
         public Item2ViewHolder(View itemView) {
@@ -490,7 +506,9 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             button1 = (Button) itemView.findViewById(R.id.bt_zhengzhuan);
             button2 = (Button) itemView.findViewById(R.id.bt_stop);
             button3 = (Button) itemView.findViewById(R.id.bt_fanzhuan);
-            lamp2 = (ImageView) itemView.findViewById(R.id.lamp);
+            lamp2_1 = (ImageView) itemView.findViewById(R.id.lamp1);
+            lamp2_2 = (ImageView) itemView.findViewById(R.id.lamp2);
+            lamp2_3 = (ImageView) itemView.findViewById(R.id.lamp3);
             choose = itemView.findViewById(R.id.choose);
         }
 
@@ -552,6 +570,15 @@ public class Rv3Cardview extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      * 全选与取消接口
      * @return
      */
+//    public boolean isLightOn() {
+//        return isLightOn;
+//    }
+//
+//    public void setLightOn(boolean lightOn) {
+//        isLightOn = lightOn;
+//        notifyDataSetChanged();
+//    }
+
     public void notifyAdapter(List<CheckBoxList> checkBoxList, boolean isAdd) {
         if (!isAdd) {
             this.mCheckBoxList = checkBoxList;

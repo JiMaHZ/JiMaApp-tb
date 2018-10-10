@@ -141,6 +141,7 @@ public class ControlActivity extends Fragment {
 //    public boolean[] batch_selectedList = new boolean[700];
     private List<CheckBoxList> mList = new ArrayList<>();
     private int index = 0;
+    public String responseData = null;
 
     private Button btn1 = null;
     private Button btn2 = null;
@@ -703,12 +704,20 @@ public class ControlActivity extends Fragment {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (sortType.equals("风机") || sortType.equals("全部")) {
-                    batchControl(0, tw, "0005", "批量开");
+//                if (sortType.equals("风机") || sortType.equals("全部")) {
+//                    batchControl(0, tw, "0005", "批量开");
+//                }
+//                if (sortType.equals("卷膜") || sortType.equals("全部")) {
+//                    batchControl(tw, tw + te, "0003", "批量正转");
+//                }
+                if (sortType.equals("风机") ) {
+                    batchControl(0, tw, "0005",null, "批量关");
+                }else if (sortType.equals("卷膜") ) {
+                    batchControl(tw, tw + te, null,"0003", "批量关");
+                }else if (sortType.equals("全部") ){
+                    batchControl(0, tw+te, "0005","0003", "批量关");
                 }
-                if (sortType.equals("卷膜") || sortType.equals("全部")) {
-                    batchControl(tw, tw + te, "0003", "批量正转");
-                }
+
             }
         });
 
@@ -716,7 +725,7 @@ public class ControlActivity extends Fragment {
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                batchControl(tw, tw + te, "0002", "批量反转");
+                batchControl(tw, tw + te, null,"0002", "批量反转");
             }
         });
 
@@ -724,12 +733,14 @@ public class ControlActivity extends Fragment {
         button4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (sortType.equals("风机") || sortType.equals("全部")) {
-                    batchControl(0, tw, "0004", "批量关");
+                if (sortType.equals("风机") ) {
+                    batchControl(0, tw, "0004",null, "批量关");
+                }else if (sortType.equals("卷膜") ) {
+                    batchControl(tw, tw + te, null,"0008", "批量关");
+                }else if (sortType.equals("全部") ){
+                    batchControl(0, tw+te, "0004","0008", "批量关");
                 }
-                if (sortType.equals("卷膜") || sortType.equals("全部")) {
-                    batchControl(tw, tw + te, "0008", "批量关");
-                }
+
             }
         });
 
@@ -1210,11 +1221,97 @@ public class ControlActivity extends Fragment {
     }
 
     //批量控制
-    private void batchControl(int start_add, int end_add, String param_control, final String tag) {
+    private void batchControl(final int start_add,final int end_add, final String param_control_1,final String param_control_2, final String tag) {
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                if (start_add<tw){
+                    for (i = start_add; i < tw; i++) {
+                        if (rvAdapter.getCheckBoxList().get(i).isSelect && !button_values.get(i).equals(param_control_1)) {
+//                         String responseData;
+                            responseData = null;
+                            Log.e("post*********", "发送第" + i + "个信息");
+                            HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/" + deviceid12[i], token, key12[i], param_control_1, new okhttp3.Callback() {
+                                @Override
+                                public void onFailure(Call call, IOException e) {
+                                }
 
-        for (i = start_add; i < end_add; i++) {
-            if (rvAdapter.getCheckBoxList().get(i).isSelect) {
-                Log.e("post*********", "发送第" + i + "个信息");
+                                @Override
+                                public void onResponse(Call call, Response response) throws IOException {
+                                    responseData = response.body().string();
+                                    Log.e("responseData*******", responseData);
+//                        try {
+//                            Thread.sleep(1000);
+//                        } catch (InterruptedException e) {
+//                            return;
+//                        }
+
+                                }
+                            });
+                            try {
+                                Thread.sleep(1500);
+                            } catch (InterruptedException e) {
+                                return;
+                            }
+                            if (responseData == null) {
+                                Log.e("responseData*******", "1次发送后未接收");
+                                httpPost(i, param_control_1, tag);
+                            }
+                            if (responseData == null) {
+                                Log.e("responseData*******", "3次发送后未接收");
+                            }else {
+                                Log.e("responseData*******", responseData);
+                            }
+                        }
+                    }
+                }
+                if (end_add>tw){
+                    for (i = tw; i < end_add; i++) {
+                        if (rvAdapter.getCheckBoxList().get(i).isSelect && !button_values.get(i).equals(param_control_2)) {
+//                         String responseData;
+                            responseData = null;
+                            Log.e("post*********", "发送第" + i + "个信息");
+                            HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/" + deviceid12[i], token, key12[i], param_control_2, new okhttp3.Callback() {
+                                @Override
+                                public void onFailure(Call call, IOException e) {
+                                }
+
+                                @Override
+                                public void onResponse(Call call, Response response) throws IOException {
+                                    responseData = response.body().string();
+                                    Log.e("responseData*******", responseData);
+//                        try {
+//                            Thread.sleep(1000);
+//                        } catch (InterruptedException e) {
+//                            return;
+//                        }
+
+                                }
+                            });
+                            try {
+                                Thread.sleep(1200);
+                            } catch (InterruptedException e) {
+                                return;
+                            }
+                            if (responseData == null) {
+                                Log.e("responseData*******", "1次发送后未接收");
+                                httpPost(i, param_control_2, tag);
+                            }
+                            if (responseData == null) {
+                                Log.e("responseData*******", "3次发送后未接收");
+                            }
+                        }
+                    }
+                }
+            }
+        }.start();
+    }
+
+    private void httpPost(final int i,final String param_control,final String tag){
+        Log.e("post*********", "发送第" + i + "个信息");
+        for (int n=0; n <3;n++){
+            if (responseData == null){
                 HttpUtil.sendOkHttpPost(App.baseURL + "/api/plugins/rpc/twoway/" + deviceid12[i], token, key12[i], param_control, new okhttp3.Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
@@ -1222,17 +1319,25 @@ public class ControlActivity extends Fragment {
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        String responseData = response.body().string();
+                        responseData = response.body().string();
                         Log.e("responseData*******", responseData);
-                        if ((responseData != null) && (!responseData.equals("Device with requested id wasn't found!"))) {
-                            Log.e("Respond*********", tag + i);
-                        }
                     }
                 });
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    return;
+                }
+                if (responseData == null) {
+                    Log.e("Respond*********", "再次发送后第"+(n+1)+"次未接收");
+                }else {
+                    Log.e("Respond*********", tag+i);
+                }
             }
-        }
 
+        }
     }
+
 
 }
 
