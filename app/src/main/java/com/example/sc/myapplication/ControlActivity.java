@@ -809,8 +809,8 @@ public class ControlActivity extends Fragment {
                         } else {
                             index3++;
                         }
-                        index1++;
                     }
+                    index1++;
                     if ((sortType.equals("风机") && index2 == tw) || (sortType.equals("卷膜") && index3 == te) || (sortType.equals("全部") && index1 == tw + te)) {
                         button1.setText("取消");
                     }
@@ -825,8 +825,8 @@ public class ControlActivity extends Fragment {
                         } else {
                             index3--;
                         }
-                        index1--;
                     }
+                    index1--;
                     button1.setText("全选");
                 }
                 String t = ControlActivity.this.title.get(position);
