@@ -48,7 +48,7 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.ViewHolder> {
         } else if (images.contains("dapeng")) {
             holder.imageView.setImageResource(R.drawable.dapeng);
         } else {
-            holder.imageView.setImageResource(R.drawable.def_img);
+            holder.imageView.setImageResource(R.drawable.def_2);
         }
         holder.textView.setText(datas.get(position));
         holder.arrow.setImageResource(R.drawable.arrow_right);

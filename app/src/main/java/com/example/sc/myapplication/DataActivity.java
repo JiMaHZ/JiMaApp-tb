@@ -181,12 +181,17 @@ public class DataActivity extends Fragment {
                             unit[i2] = value1.getConfig().getUnit();
                             key[i2] = device.getKey().substring(1);
                             int key10 = Integer.parseInt(key[i2], 16);
-                            int i111 = (key10 - 256) / 32;
-                            int i222 = ((key10 - 256) % 32) / 4;
 
+                            if (key[i2].substring(1,2).equals("9")) {
+                                int i111 = (key10 - 2304) / 32;
+                                int i222 = ((key10 - 2304) % 32) / 4;
+                                i5 = i111 * 8 + i222;
+                            }else{
+                                int i111 = (key10 - 256) / 32;
+                                int i222 = ((key10 - 256) % 32) / 4;
+                                i5 = i111 * 8 + i222;
+                            }
 
-
-                            i5 = i111 * 8 + i222;
                             if (i5 > 511) {
                                 i5 = i5 - 256;
                             }
@@ -195,7 +200,7 @@ public class DataActivity extends Fragment {
                             name12[i5] = name[i2];
                             type12[i5] = type[i2];
                             unit12[i5] = unit[i2];
-                            if (key[i2].equals("0100")) {
+                            if (key[i2].equals("0100")||key[i2].equals("0900")) {
                                 i7 = 1;
                             }
                             JSONObject jsonObject = new JSONObject();
@@ -218,10 +223,16 @@ public class DataActivity extends Fragment {
                             type0[arrayreal] = type12[i];
                             unit0[arrayreal] = unit12[i];
                             key0[arrayreal] = key12[i];
+                            int i111,i222;
 
                             int key10 = Integer.parseInt(key0[arrayreal], 16);
-                            int i111 = (key10 - 256) / 32;
-                            int i222 = ((key10 - 256) % 32) / 4;
+                            if (key0[arrayreal].substring(1,2).equals("9")) {
+                                i111 = (key10 - 2304) / 32;
+                                i222 = ((key10 - 2304) % 32) / 4;
+                            }else{
+                                i111 = (key10 - 256) / 32;
+                                i222 = ((key10 - 256) % 32) / 4;
+                            }
                             DeviceLocation DeviceLocation =new DeviceLocation();
                             DeviceLocation.setLocation("#"+String.valueOf(i111+1)+"-"+String.valueOf(i222+1));
                             DeviceLocationList.add(DeviceLocation);
